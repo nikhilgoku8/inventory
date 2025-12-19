@@ -1,0 +1,77 @@
+categories
+- id (BIGINT, PK)
+- title            (Clothing)
+- slug
+- created_at
+- updated_at
+
+
+sub_categories
+- id (BIGINT, PK)
+- category_id     (FK → categories.id)
+- title            (T-Shirts)
+- slug
+- status
+- created_at
+- updated_at
+
+
+products
+- id 				(BIGINT, PK)
+- sub_category_id 	(FK → sub_categories.id)
+- title            	(Polo Neck with Tricolor T-Shirt)
+- description     	(optional)
+- is_bundle
+- code 				(Used for sku_code generation)
+- status          	(tinyint)
+- created_at
+- updated_at
+
+skus (inventory)
+	id
+	product_id
+	sku_code (Unique)
+	barcode (picqer/php-barcode-generator)
+			$generator = new \Picqer\Barcode\BarcodeGeneratorPNG();
+			$barcode = $generator->getBarcode(
+			    $sku->sku_code,
+			    $generator::TYPE_CODE_128
+			);
+
+			Storage::put("barcodes/{$sku->sku_code}.png", $barcode);
+	price
+	stock
+	status (active/inactive)
+
+
+sku_bundles
+	bundle_sku_id
+	child_sku_id
+	quantity
+
+
+attributes
+- id			(BIGINT, PK)
+- name			(Color, Size, Sleeve)
+
+
+attribute_values
+	id
+	attribute_id
+	value
+	- code (Used for sku_code generation)
+
+
+sku_attributes
+- sku_id           (FK → product_variants.id)
+- attribute_value_id  (FK → attribute_values.id)
+
+UNIQUE (sku_id, attribute_value_id)
+
+
+inventory_movements
+- id (PK)
+- sku_id          (FK → skus.id)
+- quantity        (int)     // negative = out, positive = in
+- movement_type   (string)  // sale, combo_sale, return, adjustment
+- remarks (nullable)
