@@ -8,14 +8,14 @@
                 <div class="left_section">
                     <h1 class="">Admins</h1>
                     <ul class="breadcrumb">
-                        <li><a href="{{ url('nwm/dashboard'); }}">Home</a></li>
-                        <li><a href="{{ url('nwm/admins'); }}">Admins</a></li>
+                        <li><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                        <li><a href="{{ route('admin.admins.index') }}">Admins</a></li>
                     </ul>    
                 </div>
                 
                 <div class="right_section">
                     <div class="blue_filled_btn">
-                        <a href="nwm/admins">Back</a>
+                        <a href="{{ url()->previous() }}">Back</a>
                     </div>
                 </div>
             </div>                    
@@ -90,7 +90,6 @@
                                 <select name="role" id="role">
                                     <option value="">Select Role</option>
                                     <option value="executive" @if($result->role=='executive') {{ 'selected' }} @endif>Executive</option>
-                                    <!-- <option value="admin" @if($result->role=='admin') {{ 'selected' }} @endif>Admin</option> -->
                                     <option value="superadmin" @if($result->role=='superadmin') {{ 'selected' }} @endif>Super Admin</option>
                                 </select>
                             </div>
@@ -124,14 +123,14 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "<?php echo URL::to('/'); ?>/nwm/admins/store",
+            url: "{{ route('admin.admins.store') }}",
             data:  new FormData(this),
             dataType: 'json',
             cache: false,
             contentType: false,
             processData: false,
             success: function(result) {
-                location.href="<?php echo URL::to('/'); ?>/nwm/admins/";
+                window.location.href="{{ route('admin.admins.index') }}";
             },
             error: function(data){
                 var responseData = data.responseJSON;        
@@ -145,30 +144,6 @@ $(document).ready(function() {
         });
 
     }));
-
-
-    $("#state_id").on('change', function(){
-        
-        var state_id = $(this).val();        
-
-        $.ajax({
-            type: "POST",
-            url: "<?php echo URL::to('/'); ?>/nwm/admins/getData_cities",
-            data: {"_token":"{{ csrf_token() }}", "state_id":state_id},
-            dataType: 'json',
-            success: function(result) {
-                $("#city_id option").remove();
-                $("#city_id").append('<option value="">Select City</option>');
-                jQuery.each( result, function( i, val ) {                    
-                    $("#city_id").append('<option value="'+val['id']+'">'+val['name']+'</option>');
-                });
-            },
-            error: function(data){
-                
-            }
-        });
-
-    });
 
 });
 </script>
