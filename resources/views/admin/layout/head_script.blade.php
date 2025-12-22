@@ -4,9 +4,9 @@
 <meta name="description" content="">
 <meta name="author" content="">
 
-<title>{{ env('APP_NAME') }}</title>
+<title>{{ config('app.name') }}</title>
 
-<link rel="icon" type="image/png" href="{{ asset('admin/assets/images/favicon.png') }}">
+<link rel="icon" type="image/jpg" href="{{ asset('admin/assets/images/favicon.jpg') }}">
 
 <!-- Bootstrap Core CSS -->
 <link href="{{ asset('admin/assets/css/bootstrap.min.css') }}" rel="stylesheet">

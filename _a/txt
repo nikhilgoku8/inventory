@@ -11,7 +11,6 @@ sub_categories
 - category_id     (FK → categories.id)
 - title            (T-Shirts)
 - slug
-- status
 - created_at
 - updated_at
 
@@ -63,7 +62,7 @@ attribute_values
 
 
 sku_attributes
-- sku_id           (FK → product_variants.id)
+- sku_id           (FK → skus.id)
 - attribute_value_id  (FK → attribute_values.id)
 
 UNIQUE (sku_id, attribute_value_id)

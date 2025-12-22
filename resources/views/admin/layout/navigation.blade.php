@@ -7,7 +7,7 @@
             <div class="header_bar">
                 <div class="logo_box">
                     <div class="logo">
-                        <img src="{{ asset('admin/assets/images/logo.png') }}">
+                        <img src="{{ asset('admin/assets/images/logo.jpg') }}">
                     </div>
                 </div>
                 <div class="right_section">
@@ -34,7 +34,7 @@
                             <ul class="dropdown-menu dropdown-user">
                                 <!-- <li><a><i class="fa fa-key fa-fw"></i> Change Password</a></li>
                                 <li class="divider"></li> -->
-                                <li><a href="{{ url('awm/logout') }}"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                                <li><a href="{{ route('admin.logout') }}"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                                 </li>
                             </ul>
                             <!-- /.dropdown-user -->
@@ -73,31 +73,14 @@
                         @if(in_array(session('userType'), ['superadmin','executive']))
                             <li><a href="{{ route('admin.dashboard') }}" class="active"><i class="fa fa-line-chart" aria-hidden="true"></i> Dashboard</a></li>
                             <li><a href="{{ route('admin.admins.index') }}">Admins</a></li>
-                            <li><a href="{{ route('admin.homepage.index') }}">Homepage</a></li>
                             <li><a href="{{ route('admin.categories.index') }}">Categories</a></li>
-                            <li><a href="{{ route('admin.sub-categories.index') }}">Sub Categories</a></li>
-                            <li><a href="{{ route('admin.products.index') }}">Products</a></li>
-                            <li><a href="{{ route('admin.services.index') }}">Services</a></li>
-                            <li><a href="{{ route('admin.clients.index') }}">Clients</a></li>
-                            <li><a href="{{ route('admin.testimonials.index') }}">Testimonials</a></li>
-                            <li><a href="{{ route('admin.global-presence.index') }}">Global Presence</a></li>
-                            <li><a href="{{ route('admin.why-anish.index') }}">Why Anish</a></li>
-                            <li><a href="{{ route('admin.about-us.index') }}">About Us</a></li>
-                            <li><a href="{{ route('admin.gallery.index') }}">Gallery</a></li>
-                            <li><a href="{{ route('admin.blogs.index') }}">Blogs</a></li>
-                            <li><a href="{{ route('admin.contact_us.edit') }}">Contact Us Page</a></li>
-                            <li><a href="{{ route('admin.contact_information.edit') }}">Contact Information</a></li>
-                            <li>
+                            <!-- <li>
                                 <a><i class="fa fa-list-ul" aria-hidden="true"></i> Enquiries<span class="fa arrow"></span></a>
                                 <ul class="nav nav-second-level">
-                                    <li><a href="{{ route('admin.enquiries.index') }}">All</a></li>
-                                    <li><a href="{{ route('admin.enquiries.enquire_now') }}">Enquire Now</a></li>
-                                    <li><a href="{{ route('admin.enquiries.customer_support') }}">Customer Support</a></li>
-                                    <li><a href="{{ route('admin.enquiries.career') }}">Career</a></li>
-                                    <li><a href="{{ route('admin.enquiries.partner_with_us') }}">Partner With Us</a></li>
-                                    <li><a href="{{ route('admin.enquiries.sales') }}">Sales</a></li>
+                                    <li><a href="@{{ route('admin.enquiries.index') }}">All</a></li>
+                                    <li><a href="@{{ route('admin.enquiries.enquire_now') }}">Enquire Now</a></li>
                                 </ul>
-                            </li>
+                            </li> -->
                         @endif
 
                         @if(in_array(session('userType'), ['superadmin']))

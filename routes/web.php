@@ -6,6 +6,7 @@ use App\Http\Middleware\IsAdmin;
 
 use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\CategoryController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -34,8 +35,8 @@ Route::prefix('iwm')->as('admin.')->group(function(){
             Route::resource('admins', AdminController::class);
             Route::post('/admins/bulk-delete', [AdminController::class, 'bulkDelete'])->name('admins.bulk-delete');
 
-            // Route::resource('categories', CategoryController::class);
-            // Route::post('/categories/bulk-delete', [CategoryController::class, 'bulkDelete'])->name('categories.bulk-delete');
+            Route::resource('categories', CategoryController::class);
+            Route::post('/categories/bulk-delete', [CategoryController::class, 'bulkDelete'])->name('categories.bulk-delete');
 
             // Route::resource('sub-categories', SubCategoryController::class);
             // Route::post('sub-categories/bulk-delete', [SubCategoryController::class, 'bulkDelete'])->name('sub-categories.bulk-delete');

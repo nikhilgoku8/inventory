@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('inventory_movements', function (Blueprint $table) {
+        Schema::create('sku_bundles', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('sku_id')->constrained('skus')->onDelete('cascade');
+            $table->foreignId('bundle_sku_id')->constrained('skus')->onDelete('cascade');
+            $table->foreignId('child_sku_id')->constrained('skus')->onDelete('cascade');
             $table->integer('quantity');
-            $table->string('movement_type', 255);
-            $table->text('remarks')->nullable();
-            $table->string('created_by', 50)->nullable();
-            $table->string('updated_by', 50)->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('inventory_movements');
+        Schema::dropIfExists('sku_bundles');
     }
 };

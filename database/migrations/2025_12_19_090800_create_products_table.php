@@ -13,6 +13,15 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('sub_category_id')->constrained('sub_categories')->onDelete('cascade');
+            $table->string('title', 255);
+            $table->string('slug', 255);
+            $table->text('description');
+            $table->boolean('is_bundle')->default(0);
+            $table->string('code', 50);
+            // $table->boolean('status');
+            $table->string('created_by', 50)->nullable();
+            $table->string('updated_by', 50)->nullable();
             $table->timestamps();
         });
     }

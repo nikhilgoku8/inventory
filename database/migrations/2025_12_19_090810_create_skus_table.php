@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('skus', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+            $table->string('sku_code', 255)->unique();
+            $table->string('barcode', 255);
+            $table->integer('price')->nullable();
+            $table->integer('stock');
+            $table->string('created_by', 50)->nullable();
+            $table->string('updated_by', 50)->nullable();
             $table->timestamps();
         });
     }

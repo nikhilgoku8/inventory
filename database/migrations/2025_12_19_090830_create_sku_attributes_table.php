@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sku_bundles', function (Blueprint $table) {
+        Schema::create('sku_attributes', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('sku_id')->constrained('skus')->onDelete('cascade');
+            $table->foreignId('attribute_value_id')->constrained('attribute_values')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -22,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sku_bundles');
+        Schema::dropIfExists('sku_attributes');
     }
 };

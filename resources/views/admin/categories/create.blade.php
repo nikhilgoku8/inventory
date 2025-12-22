@@ -53,13 +53,6 @@
                                 <input type="text" name="title" placeholder="Title">
                             </div>
                         </div>
-                        <div class="col-sm-12">
-                            <div class="input_box">
-                                <label>Sort Order</label>
-                                <div class="error form_error" id="form-error-sort_order"></div>
-                                <input type="number" min="0" name="sort_order" placeholder="Sort Order">
-                            </div>
-                        </div>
                         <div class="clr"></div>
                     </div>
                     <div class="input_boxes">

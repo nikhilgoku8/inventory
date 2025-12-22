@@ -19,8 +19,8 @@ class LoginController extends Controller
     // public function register(){
     //     $data = array(
     //         'name' => 'Admin',
-    //         'email' => 'admin@anishpharma.com',
-    //         'password' => Hash::make('E3b5jolem65xKzP3'),
+    //         'email' => 'admin@gmail.com',
+    //         'password' => Hash::make('password'),
     //         'role' => 'superadmin'
     //     );
     //     DB::table('admins')->insert($data);
@@ -54,7 +54,7 @@ class LoginController extends Controller
             try {
 
                 $admin = Admin::where('email', $request->email)->first();
-
+                
                 if($admin){
 
                     if (Hash::check($request->password, $admin->password)) {
@@ -65,42 +65,35 @@ class LoginController extends Controller
                         $request->session()->put('isAdmin', 'yes');
                         $request->session()->put('userType', $admin->role);
                         $request->session()->put('last_login', $admin->last_login ?? now());
-                        $response = array(
+                        return response()->json([
                             'success' => true,
                             'userType' => $admin->role,
                             'message' => 'Login successful'
-                        );
-                        return $response;
+                        ], 200);
                     }else{
-                        $response = array(
+                        return response()->json([
                             'error' => true,
                             'error_type' => 'login',
                             'message' => 'Login failed - Incorrect Credentials'
-                        );
-                        return $response;
+                        ], 401);
                     }      
                 }else{
-                    $response = array(
+                    return response()->json([
                         'error' => true,
                         'error_type' => 'login',
                         'message' => 'Login failed - Admin not found'
-                    );
-                    return $response;
+                    ], 402);
+                    // return $response;
                 }
             } catch (\Exception $e) {
-                return [
+                return response()->json([
                     'error' => true,
                     'error_type' => 'database',
                     'message' => 'Database connection error: ' . $e->getMessage(),
-                ];
-            }
-
-            if(array_key_exists('error', $response)){                
-                return response()->json($response, 422);
+                ], 500);
             }
 
             return response()->json($response);
-
         }
 
     }    

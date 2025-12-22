@@ -12,7 +12,7 @@ BaseUrl.siteRoot = "{{ URL::to('/') }}/";
 <meta name="description" content="">
 <meta name="author" content="">
 
-<title>{{ env('APP_NAME') }} - Admin Login</title>
+<title>{{ config('app.name') }} - Admin Login</title>
 
 <link rel="icon" type="image/png" href="{{ asset('admin/assets/images/favicon.png') }}">
 
@@ -44,7 +44,7 @@ BaseUrl.siteRoot = "{{ URL::to('/') }}/";
 		        <div class="col-md-4 col-md-offset-4">
 		            <div class="login-panel panel panel-default">
 		            	<div class="panel-logo">
-		            		<div class="image"><img src="{{ asset('admin/assets/images/logo.png') }}"></div>
+		            		<div class="image"><img src="{{ asset('admin/assets/images/logo.jpg') }}"></div>
 		            	</div>
 		                <div class="panel-heading">
 		                    <h3 class="panel-title">Welcome Admin</h3>
