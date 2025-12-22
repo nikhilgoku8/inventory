@@ -68,53 +68,6 @@
                                 <input type="text" name="title" placeholder="Title" value="{{ $result->title }}">
                             </div>
                         </div>
-                        <div class="col-sm-6">
-                            <div class="input_box">
-                                <label>Thumbnail</label>
-                                <div class="error form_error form-error-thumbnail"></div>
-                                <div class="existing_file_wrapper">
-                                    To replace <a href="{{ asset('uploads/sub-categories/'.$result->thumbnail) }}" target="_blank"><img src="{{ asset('uploads/sub-categories/'.$result->thumbnail) }}" width="50px">Existing Thumbnail</a> select below
-                                </div>
-                                <input type="hidden" name="existing_thumbnail" value="{{ $result->thumbnail }}">
-                                <input type="file" name="thumbnail">
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="input_box">
-                                <label>Image</label>
-                                <div class="error form_error form-error-image"></div>
-                                <div class="existing_file_wrapper">
-                                    To replace <a href="{{ asset('uploads/sub-categories/'.$result->image) }}" target="_blank"><img src="{{ asset('uploads/sub-categories/'.$result->image) }}" width="50px">Existing Image</a> select below
-                                </div>
-                                <input type="hidden" name="existing_image" value="{{ $result->image }}">
-                                <input type="file" name="image">
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="input_box">
-                                <label>PDF</label>
-                                <div class="error form_error form-error-pdf"></div>
-                                <div class="existing_file_wrapper">
-                                    To replace <a href="{{ asset('uploads/sub-categories/pdf/'.$result->pdf) }}" target="_blank"> Existing PDF</a> select below
-                                </div>
-                                <input type="hidden" name="existing_pdf" value="{{ $result->pdf }}">
-                                <input type="file" name="pdf">
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="input_box">
-                                <label>Description</label>
-                                <div class="error form_error" id="form-error-description"></div>
-                                <textarea name="description" class="toolbar">{!! $result->description !!}</textarea>
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="input_box">
-                                <label>Sort Order</label>
-                                <div class="error form_error" id="form-error-sort_order"></div>
-                                <input type="number" name="sort_order" placeholder="Sort Order" value="{{ $result->sort_order }}">
-                            </div>
-                        </div>
                         <div class="clr"></div>
                     </div>
 

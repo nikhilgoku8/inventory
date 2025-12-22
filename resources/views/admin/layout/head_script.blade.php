@@ -4,6 +4,8 @@
 <meta name="description" content="">
 <meta name="author" content="">
 
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
 <title>{{ config('app.name') }}</title>
 
 <link rel="icon" type="image/jpg" href="{{ asset('admin/assets/images/favicon.jpg') }}">

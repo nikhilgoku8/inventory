@@ -16,16 +16,16 @@ class LoginController extends Controller
         return view('admin.dashboard');
     }
 
-    // public function register(){
-    //     $data = array(
-    //         'name' => 'Admin',
-    //         'email' => 'admin@gmail.com',
-    //         'password' => Hash::make('password'),
-    //         'role' => 'superadmin'
-    //     );
-    //     DB::table('admins')->insert($data);
-    //     echo "Success";
-    // }
+    public function register(){
+        $data = array(
+            'name' => 'Admin',
+            'email' => 'admin@gmail.com',
+            'password' => Hash::make('password'),
+            'role' => 'superadmin'
+        );
+        DB::table('admins')->insert($data);
+        echo "Success";
+    }
 
     public function login(){
         return view('admin/login');

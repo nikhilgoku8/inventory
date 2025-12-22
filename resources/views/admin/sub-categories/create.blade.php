@@ -67,41 +67,6 @@
                                 <input type="text" name="title" placeholder="Title">
                             </div>
                         </div>
-                        <div class="col-sm-12">
-                            <div class="input_box">
-                                <label>Thumbnail</label>
-                                <div class="error form_error" id="form-error-thumbnail"></div>
-                                <input type="file" name="thumbnail">
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="input_box">
-                                <label>Image</label>
-                                <div class="error form_error" id="form-error-image"></div>
-                                <input type="file" name="image">
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="input_box">
-                                <label>PDF</label>
-                                <div class="error form_error " id="form-error-pdf"></div>
-                                <input type="file" name="pdf">
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="input_box">
-                                <label>Description</label>
-                                <div class="error form_error" id="form-error-description"></div>
-                                <textarea name="description" class="toolbar"></textarea>
-                            </div>
-                        </div>
-                        <div class="col-sm-12">
-                            <div class="input_box">
-                                <label>Sort Order</label>
-                                <div class="error form_error" id="form-error-sort_order"></div>
-                                <input type="number" name="sort_order" placeholder="Sort Order">
-                            </div>
-                        </div>
                         <div class="clr"></div>
                     </div>
                     <div class="input_boxes">
@@ -139,18 +104,6 @@ $(document).ready(function() {
             success: function(result) {
                 location.href="{{ route('admin.sub-categories.index') }}";
             },
-            // error: function(data){
-            //     var responseData = data.responseJSON;
-            //     if(responseData.error_type=='form'){
-            //         jQuery.each( responseData.errors, function( i, val ) {
-            //             $("#form-error-"+i).html(val);
-            //             $("#form-error-"+i).addClass('alert alert-danger');
-            //         });
-            //     }else{
-            //         alert(responseData.message || 'An unexpected error occurred.');
-            //         console.log(responseData.console_message);
-            //     }
-            // }
             error: function(data){
                 if (data.status === 422) {
                     let errors = data.responseJSON.errors;

@@ -59,7 +59,6 @@
                                 <th>Product</th>
                                 <th>Sub Category</th>
                                 <th>Category</th>
-                                <th>Sort Order</th>
                                 <th>Created By</th>
                                 <th>Updated By</th>
                                 <th class="action">ACTION</th>
@@ -70,7 +69,6 @@
                                         <td>{{ $row->title }}</td>
                                         <td><a href="{{ route('admin.sub-categories.edit', $row->subCategory->id) }}">{{ $row->subCategory->title }}</a></td>
                                         <td><a href="{{ route('admin.categories.edit', $row->subCategory->category->id) }}">{{ $row->subCategory->category->title }}</a></td>
-                                        <th>{{ $row->sort_order }}</th>
                                         <td>{{ $row->created_by }} <br> {{ $row->created_at }}</td>
                                         <td>{{ $row->updated_by }} <br> {{ $row->updated_at }}</td>
                                         <td class="action">

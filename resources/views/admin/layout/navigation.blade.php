@@ -74,6 +74,8 @@
                             <li><a href="{{ route('admin.dashboard') }}" class="active"><i class="fa fa-line-chart" aria-hidden="true"></i> Dashboard</a></li>
                             <li><a href="{{ route('admin.admins.index') }}">Admins</a></li>
                             <li><a href="{{ route('admin.categories.index') }}">Categories</a></li>
+                            <li><a href="{{ route('admin.sub-categories.index') }}">Sub Categories</a></li>
+                            <li><a href="{{ route('admin.products.index') }}">Products</a></li>
                             <!-- <li>
                                 <a><i class="fa fa-list-ul" aria-hidden="true"></i> Enquiries<span class="fa arrow"></span></a>
                                 <ul class="nav nav-second-level">

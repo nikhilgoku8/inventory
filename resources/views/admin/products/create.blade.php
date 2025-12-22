@@ -83,53 +83,11 @@
                                     <textarea name="description" placeholder="Description" class="toolbar"></textarea>
                                 </div>
                             </div>
-                            <div class="col-sm-6">
-                                <div class="input_box">
-                                    <label>Image</label>
-                                    <div class="error form_error form-error-image"></div>
-                                    <input type="file" name="image">
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="input_box">
-                                    <label>PDF</label>
-                                    <div class="error form_error form-error-pdf"></div>
-                                    <input type="file" name="pdf">
-                                </div>
-                            </div>
                             <div class="col-sm-12">
                                 <div class="input_box">
-                                    <label>Specifications Table</label>
-                                    <div class="small_note">To add or delete a column click the cell and then click on the table icon <i class="fa fa-table" aria-hidden="true"></i><br><br></div>
-                                    <div class="error form_error form-error-specifications_table"></div>
-                                    <textarea name="specifications_table" placeholder="Description" class="toolbar">
-                                        <table width="100%">
-                                            <tr>
-                                                <th>1</th>
-                                                <td>a</td>
-                                            </tr>
-                                            <tr>
-                                                <th>2</th>
-                                                <td>b</td>
-                                            </tr>
-                                        </table>
-                                    </textarea>
-                                    <br>
-                                    <div class="orange_hollow_btn">
-                                        <button type="button" onclick="clearTextArea();">Clear Specifications Table</button>
-                                    </div>
-                                    <script>
-                                        function clearTextArea(){
-                                            tinymce.get('specifications_table').setContent('');
-                                        }
-                                    </script>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="input_box">
-                                    <label>Sort Order</label>
-                                    <div class="error form_error form-error-sort_order"></div>
-                                    <input type="number" name="sort_order" placeholder="Sort Order">
+                                    <label>Code</label>
+                                    <div class="error form_error form-error-code"></div>
+                                    <input type="text" name="code" placeholder="Code"  oninput="this.value = this.value.toUpperCase()">
                                 </div>
                             </div>
                             <div class="clr"></div>
@@ -206,8 +164,6 @@ $(document).ready(function() {
 
     $('select[name="category_id"]').on('change', function () {
         var categoryId = $(this).val();
-
-        var token = $('meta[name="csrf-token"]').attr('content');
 
         if (categoryId) {
             $.ajax({

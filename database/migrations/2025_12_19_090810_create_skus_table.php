@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('barcode', 255);
             $table->integer('price')->nullable();
             $table->integer('stock');
+            $table->boolean('is_bundle')->default(0);
             $table->string('created_by', 50)->nullable();
             $table->string('updated_by', 50)->nullable();
             $table->timestamps();

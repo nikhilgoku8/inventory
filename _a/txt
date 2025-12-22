@@ -1,3 +1,5 @@
+php artisan migrate:refresh --path=/database/migrations/2025_12_19_090800_create_products_table.php
+
 categories
 - id (BIGINT, PK)
 - title            (Clothing)
@@ -20,7 +22,6 @@ products
 - sub_category_id 	(FK → sub_categories.id)
 - title            	(Polo Neck with Tricolor T-Shirt)
 - description     	(optional)
-- is_bundle
 - code 				(Used for sku_code generation)
 - status          	(tinyint)
 - created_at
@@ -29,6 +30,7 @@ products
 skus (inventory)
 	id
 	product_id
+	is_bundle
 	sku_code (Unique)
 	barcode (picqer/php-barcode-generator)
 			$generator = new \Picqer\Barcode\BarcodeGeneratorPNG();
@@ -74,3 +76,5 @@ inventory_movements
 - quantity        (int)     // negative = out, positive = in
 - movement_type   (string)  // sale, combo_sale, return, adjustment
 - remarks (nullable)
+
+

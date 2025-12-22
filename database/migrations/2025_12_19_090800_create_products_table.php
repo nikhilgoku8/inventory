@@ -16,10 +16,8 @@ return new class extends Migration
             $table->foreignId('sub_category_id')->constrained('sub_categories')->onDelete('cascade');
             $table->string('title', 255);
             $table->string('slug', 255);
-            $table->text('description');
-            $table->boolean('is_bundle')->default(0);
-            $table->string('code', 50);
-            // $table->boolean('status');
+            $table->text('description')->nullable();
+            $table->string('code', 50)->unique();
             $table->string('created_by', 50)->nullable();
             $table->string('updated_by', 50)->nullable();
             $table->timestamps();
