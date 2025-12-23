@@ -65,7 +65,8 @@ class ProductController extends Controller
     {
         $data['result'] = $product;
         $data['categories'] = Category::all();
-        $data['subCategories'] = SubCategory::all();
+        // $data['subCategories'] = SubCategory::all();
+        $data['subCategories'] = SubCategory::where('category_id', $product->subCategory->category_id)->get();
         return view('admin.products.edit', $data);
     }
 
@@ -93,7 +94,8 @@ class ProductController extends Controller
                 'sub_category_id' => 'required|exists:sub_categories,id',
                 'title' => 'required|string|max:255|unique:products,title,'.$dataID,
                 'description' => 'nullable|string',
-                'code' => 'required|string|max:50',
+                'code' => ['required', 'regex:/^[A-Z]+(-[A-Z]+)*$/', 'unique:products,code,'.$dataID],
+                'image' => 'bail|required_without:existing_image|file|mimes:jpg,jpeg,png,webp|max:1024',
             ];
 
             $messages = [];
@@ -105,6 +107,29 @@ class ProductController extends Controller
             $validated = $validator->validated();
 
             $validated['slug'] = $this->string_filter($validated['title']);
+
+            // Need to set folder path for file manipulation
+            $uploadRoot = base_path(env('UPLOAD_ROOT'));
+            $imagesFolder = $uploadRoot . '/products';
+
+            if($request->hasFile('image')){
+                $file = $validated['image'];
+                $fileName = $validated['slug'] . '_' . uniqid() . '_' . date('Ymdhis') . '.' . $file->getClientOriginalExtension();
+                $file->move($imagesFolder, $fileName);
+                $validated['image'] = $fileName;
+
+                if(!empty($dataID)){
+                    // Get existing image name from database for current id
+                    $existing_image = Product::find($dataID)->image;
+
+                    // Delete existing image if exists
+                    if($existing_image && file_exists($imagesFolder.'/'.$existing_image)){
+                        @unlink($imagesFolder.'/'.$existing_image);
+                    }
+                }
+            }else{
+                $validated['image'] = $request->input('existing_image');
+            }
 
             if ($isNew) {
                 $validated['created_by'] = session('username');

@@ -14,6 +14,7 @@ class Product extends Model
         'slug',
         'description',
         'code',
+        'image',
         'created_by',
         'updated_by',
     ];
@@ -27,4 +28,16 @@ class Product extends Model
     // {
     //     return $this->hasMany(Sku::class);
     // }
+
+    protected static function booted()
+    {
+        static::deleting(function ($product) {
+            $uploadRoot = base_path(env('UPLOAD_ROOT'));
+            $imagesPath = $uploadRoot . '/products';
+            
+            if ($product->image && file_exists($imagesPath.'/'.$product->image)) {
+                @unlink($imagesPath.'/'.$product->image);
+            }
+        });
+    }
 }

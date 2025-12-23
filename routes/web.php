@@ -9,6 +9,8 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SubCategoryController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\AttributeController;
+use App\Http\Controllers\Admin\AttributeValueController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -46,6 +48,12 @@ Route::prefix('iwm')->as('admin.')->group(function(){
             
             Route::resource('products', ProductController::class);
             Route::post('products/bulk-delete', [ProductController::class, 'bulkDelete'])->name('products.bulk-delete');
+
+            Route::resource('attributes', AttributeController::class);
+            Route::post('/attributes/bulk-delete', [AttributeController::class, 'bulkDelete'])->name('attributes.bulk-delete');
+
+            Route::resource('attribute-values', AttributeValueController::class);
+            Route::post('/attribute-values/bulk-delete', [AttributeValueController::class, 'bulkDelete'])->name('attribute-values.bulk-delete');
 
     });
 

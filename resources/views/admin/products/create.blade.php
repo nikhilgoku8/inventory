@@ -90,6 +90,13 @@
                                     <input type="text" name="code" placeholder="Code"  oninput="this.value = this.value.toUpperCase()">
                                 </div>
                             </div>
+                            <div class="col-sm-6">
+                                <div class="input_box">
+                                    <label>Image</label>
+                                    <div class="error form_error form-error-image"></div>
+                                    <input type="file" name="image">
+                                </div>
+                            </div>
                             <div class="clr"></div>
                         </div>
 

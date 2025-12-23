@@ -76,6 +76,8 @@
                             <li><a href="{{ route('admin.categories.index') }}">Categories</a></li>
                             <li><a href="{{ route('admin.sub-categories.index') }}">Sub Categories</a></li>
                             <li><a href="{{ route('admin.products.index') }}">Products</a></li>
+                            <li><a href="{{ route('admin.attributes.index') }}">Attributes</a></li>
+                            <li><a href="{{ route('admin.attribute-values.index') }}">Attribute Values</a></li>
                             <!-- <li>
                                 <a><i class="fa fa-list-ul" aria-hidden="true"></i> Enquiries<span class="fa arrow"></span></a>
                                 <ul class="nav nav-second-level">

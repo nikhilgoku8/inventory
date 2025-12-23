@@ -96,6 +96,19 @@
                                     <input type="text" name="code" placeholder="Code"  oninput="this.value = this.value.toUpperCase()" value="{{ $result->code }}">
                                 </div>
                             </div>
+                            <div class="col-sm-6">
+                                <div class="input_box">
+                                    <label>Image</label>
+                                    <div class="error form_error form-error-image"></div>
+                                    @if(!empty($result->image))
+                                    <div class="existing_file_wrapper">
+                                        To replace <a href="{{ asset('uploads/products/'.$result->image) }}" target="_blank"><img src="{{ asset('uploads/products/'.$result->image) }}" width="50px">Existing Image</a> select below
+                                    </div>
+                                    <input type="hidden" name="existing_image" value="{{ $result->image }}">
+                                    @endif
+                                    <input type="file" name="image" placeholder="Replace Image">
+                                </div>
+                            </div>
                             <div class="clr"></div>
                         </div>
                         

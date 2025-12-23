@@ -5,16 +5,16 @@
         <div class="col-lg-12">
             <div class="page-header my_style">
                 <div class="left_section">
-                    <h1 class="">Products</h1>
+                    <h1 class="">Attribute Values</h1>
                     <ul class="breadcrumb">
                         <li><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                        <li><a href="{{ route('admin.products.index') }}">Products</a></li>
+                        <li><a href="{{ route('admin.attribute-values.index') }}">Attribute Values</a></li>
                     </ul>    
                 </div>
                 
                 <div class="right_section">
                     <div class="purple_hollow_btn">
-                        <a href="{{ route('admin.products.create'); }}">Add New</a>
+                        <a href="{{ route('admin.attribute-values.create'); }}">Add New</a>
                     </div>
                     <div class="orange_hollow_btn">
                         <a id="filter_option">Filter</a>
@@ -26,7 +26,7 @@
     </div>
     <!-- /.row -->
 
-    @include('admin.products.filter')
+    @include('admin.attribute-values.filter')
 
     <div class="row">
         <div class="fourth_row">
@@ -43,7 +43,7 @@
 
                 <div class="upper_sec">
                     <div class="left_section">
-                        <div class="title">Products Data</div>
+                        <div class="title">Attribute Values Data</div>
                         <div class="sub_title"> </div>
                     </div>
                     <div class="right_section">
@@ -56,10 +56,8 @@
                     <table>
                         <tbody>
                             <tr>
-                                <th>Image</th>
-                                <th>Product</th>
-                                <th>Sub Category</th>
-                                <th>Category</th>
+                                <th>Attribute Value</th>
+                                <th>Attribute Name</th>
                                 <th>Code</th>
                                 <th>Created By</th>
                                 <th>Updated By</th>
@@ -68,19 +66,13 @@
                             @if(!empty($result))
                                 @foreach ($result as $row)
                                     <tr>
-                                        <td>
-                                            <a href="{{ asset('uploads/products/'.$row->image) }}" target="_blank">
-                                                <img src="{{ asset('uploads/products/'.$row->image) }}" width="50px">
-                                            </a>
-                                        </td>
-                                        <td>{{ $row->title }}</td>
-                                        <td><a href="{{ route('admin.sub-categories.edit', $row->subCategory->id) }}">{{ $row->subCategory->title }}</a></td>
-                                        <td><a href="{{ route('admin.categories.edit', $row->subCategory->category->id) }}">{{ $row->subCategory->category->title }}</a></td>
+                                        <td>{{ $row->value }}</td>
+                                        <td>{{ $row->attribute->title }}</td>
                                         <td>{{ $row->code }}</td>
                                         <td>{{ $row->created_by }} <br> {{ $row->created_at }}</td>
                                         <td>{{ $row->updated_by }} <br> {{ $row->updated_at }}</td>
                                         <td class="action">
-                                            <a href="{{ route('admin.products.edit', $row->id) }}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                                            <a href="{{ route('admin.attribute-values.edit', $row->id) }}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
                                             <span class="checkbox">
                                                 <input name="dataID" class="styled" type="checkbox" value="{{ $row->id }}">
                                                 <label for="checkbox1"></label>
@@ -93,17 +85,17 @@
                     </table>
                 </div>
                 @if(method_exists($result, 'links'))
-                    <div class="table_pagination">
-                        {{ $result->links() }}
-                        <div class="clr"></div>
-                    </div>
+                <div class="table_pagination">
+                    {{ $result->links() }}
+                    <div class="clr"></div>
+                </div>
                 @endif
             </div>
 
         </div>
         <!-- fourth_row end -->
     </div>
-    <!-- /.row -->
+    <!-- /.row -->    
 
 <script type="text/javascript">
 $(document).ready(function() {
@@ -122,15 +114,11 @@ $(document).ready(function() {
         if (confirm('Are you sure you want to delete these records?')) {
             $.ajax({
                 type: "POST",
-                url: "{{ route('admin.products.bulk-delete') }}",
+                url: "{{ route('admin.attribute-values.bulk-delete') }}",
                 data: {"_token":"{{ csrf_token() }}", "dataID":dataID},
                 dataType: 'json',
                 success: function(response) {
                     window.location.reload(true);
-                },
-                error: function(data){
-                    console.log(data.message);
-                    console.log(data.responseJSON.message);
                 }
             });
         }
