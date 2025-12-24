@@ -111,6 +111,54 @@
                             </div>
                             <div class="clr"></div>
                         </div>
+
+                        <div class="attributes_wrapper">
+                            <div class="attributes-section">
+                                @if(!empty($result->attributeValues))
+                                    @foreach($result->attributeValues as $attributeRow)
+                                        <div class="input_boxes attribute-group">
+                                            <!----Product ----->
+                                            <div class="col-sm-4">
+                                                <div class="input_box">
+                                                    <label>Attribute Type {{ $loop->iteration }}</label>
+                                                    <div class="error form_error form-error-attributes-{{$loop->iteration - 1}}-id"></div>
+                                                    <select name="attributes[{{$loop->iteration - 1}}][id]" class="attribute-id">
+                                                        <option value="">Select Attribute Type</option>
+                                                        @foreach ($attributeTypes as $attributeType)
+                                                        <option value="{{$attributeType->id}}" @if($attributeRow->attributeType->id == $attributeType->id) selected @endif>{{$attributeType->title}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-5">
+                                                <div class="input_box">
+                                                    <label>Attribuite Value</label>
+                                                    <div class="error form_error form-error-attributes-{{$loop->iteration - 1}}-value"></div>
+                                                    <select name="attributes[{{$loop->iteration - 1}}][value]" class="custom_select">
+                                                        <option value="">Select Attribute Value</option>
+                                                        @if(!empty($attributeRow->attributeType->attributeValues))
+                                                            @foreach($attributeRow->attributeType->attributeValues as $row)
+                                                            <option value="{{ $row->id }}" @if($attributeRow->id == $row->id) selected @endif>{{ $row->value }}</option>
+                                                            @endforeach
+                                                        @endif
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            @if($loop->iteration != 1)
+                                            <div class="col-sm-3">
+                                                <div class="input_box orange_filled_btn">
+                                                    <button type="button" class="remove-attribute">Remove Attribute</button>
+                                                </div>
+                                            </div>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                @endif
+                            </div>
+                            <input type="button" name="button" value="Add Attribute" class="add-attribute blue_filled_btn">
+                        </div>
+                        <br>
+                        <br>
                         
                         <div class="input_boxes">
                             <div class="col-sm-4">

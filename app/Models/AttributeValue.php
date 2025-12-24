@@ -20,4 +20,9 @@ class AttributeValue extends Model
     {
         return $this->belongsTo(Attribute::class);
     }
+
+    public function skus()
+    {
+        return $this->belongsToMany(Sku::class, 'sku_attributes')->withTimestamps();
+    }
 }

@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\SubCategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\AttributeValueController;
+use App\Http\Controllers\Admin\SkuController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -54,6 +55,10 @@ Route::prefix('iwm')->as('admin.')->group(function(){
 
             Route::resource('attribute-values', AttributeValueController::class);
             Route::post('/attribute-values/bulk-delete', [AttributeValueController::class, 'bulkDelete'])->name('attribute-values.bulk-delete');
+            Route::post('/get_values_by_attribute/{id}', [AttributeValueController::class, 'get_values_by_attribute'])->name('get_values_by_attribute');
+
+            Route::get('/products/{product}/skus/create', [SkuController::class, 'create'])->name('skus.create');
+            Route::post('/products/{product}/skus', [SkuController::class, 'store'])->name('skus.store');
 
     });
 

@@ -65,7 +65,7 @@ class AttributeValueController extends Controller
             $rules = [
                 'attribute_id' => 'required|exists:attributes,id',
                 'value' => 'required|string|max:255|unique:attribute_values,value,'.$dataID,
-                'code' => ['required', 'regex:/^[A-Z]+(-[A-Z]+)*$/', 'unique:attribute_values,code,'.$dataID],
+                'code' => ['required', 'regex:/^[A-Z0-9]+(-[A-Z0-9]+)*$/', 'unique:attribute_values,code,'.$dataID],
             ];
 
             $messages = [];

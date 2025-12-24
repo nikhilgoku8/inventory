@@ -8,11 +8,14 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Category;
 use App\Models\SubCategory;
 use App\Models\Product;
+use App\Models\Sku;
+use App\Models\Attribute;
 
-class ProductController extends Controller
+class SkuController extends Controller
 {
     public function index(Request $request)
     {
+
         $subCategoryIds = [];
 
         if(!empty($request->input('category_id'))){
@@ -29,7 +32,7 @@ class ProductController extends Controller
             ? SubCategory::where('category_id', $request->input('category_id'))->get()
             : SubCategory::all();
             
-        $data['result'] = Product::with('subCategory', 'subCategory.category')
+        $data['result'] = Sku::with('subCategory', 'subCategory.category')
             ->leftJoin('sub_categories', 'products.sub_category_id', '=', 'sub_categories.id')
             ->when($request->input('q'), function ($query) use ($request) {
                 return $query->where('products.title', 'LIKE', '%'.$request->input('q').'%');
@@ -46,37 +49,38 @@ class ProductController extends Controller
         return view('admin.products.index', $data);
     }
 
-    public function create()
-    {
-        $data['categories'] = Category::all();
-        return view('admin.products.create', $data);
-    }
-
-    public function show(Product $product)
+    public function create(Product $product)
     {
         $data['result'] = $product;
+        $data['attributes'] = Attribute::all();
+        return view('admin.skus.create', $data);
+    }
+
+    public function show(Sku $sku)
+    {
+        $data['result'] = $sku;
         $data['categories'] = Category::all();
         $data['subCategories'] = SubCategory::all();
         return view('admin.products.show', $data);
     }
 
-    public function edit(Product $product)
+    public function edit(Sku $sku)
     {
-        $data['result'] = $product;
+        $data['result'] = $sku;
         $data['categories'] = Category::all();
         // $data['subCategories'] = SubCategory::all();
-        $data['subCategories'] = SubCategory::where('category_id', $product->subCategory->category_id)->get();
+        $data['subCategories'] = SubCategory::where('category_id', $sku->subCategory->category_id)->get();
         return view('admin.products.edit', $data);
     }
 
     public function store(Request $request)
     {
-        return $this->handleProductRequest($request, new Product(), true);
+        return $this->handleSkuRequest($request, new Sku(), true);
     }
 
-    public function update(Request $request, Product $product)
+    public function update(Request $request, Sku $sku)
     {
-        return $this->handleProductRequest($request, $product, false);
+        return $this->handleSkuRequest($request, $sku, false);
     }
 
     public function string_filter($string){
@@ -84,7 +88,7 @@ class ProductController extends Controller
         return $string;
     }
 
-    private function handleProductRequest(Request $request, Product $product, bool $isNew)
+    private function handleSkuRequest(Request $request, Sku $sku, bool $isNew)
     {
         $dataID = $request->input('dataID');
         try {
@@ -93,7 +97,7 @@ class ProductController extends Controller
                 'sub_category_id' => 'required|exists:sub_categories,id',
                 'title' => 'required|string|max:255|unique:products,title,'.$dataID,
                 'description' => 'nullable|string',
-                'code' => ['required', 'regex:/^[A-Z0-9]+(-[A-Z0-9]+)*$/', 'unique:products,code,'.$dataID],
+                'code' => ['required', 'regex:/^[A-Z]+(-[A-Z]+)*$/', 'unique:products,code,'.$dataID],
                 'image' => 'bail|required_without:existing_image|file|mimes:jpg,jpeg,png,webp|max:1024',
             ];
 
@@ -119,7 +123,7 @@ class ProductController extends Controller
 
                 if(!empty($dataID)){
                     // Get existing image name from database for current id
-                    $existing_image = Product::find($dataID)->image;
+                    $existing_image = Sku::find($dataID)->image;
 
                     // Delete existing image if exists
                     if($existing_image && file_exists($imagesFolder.'/'.$existing_image)){
@@ -137,14 +141,14 @@ class ProductController extends Controller
 
             // Directly handle the save/update logic here
             if ($isNew) {
-                $product = Product::create($validated);
+                $sku = Sku::create($validated);
             } else {
-                $product->update($validated);
+                $sku->update($validated);
             }
 
             return response()->json([
                 'status' => 'success',
-                'message' => $isNew ? 'Product created successfully!' : 'Product updated successfully!',
+                'message' => $isNew ? 'Sku created successfully!' : 'Sku updated successfully!',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -163,15 +167,15 @@ class ProductController extends Controller
         }
     }
 
-    public function destroy(Product $product)
+    public function destroy(Sku $sku)
     {
-        $product->delete();
-        return redirect()->route('admin.products.index')->with('success', 'Product deleted!');
+        $sku->delete();
+        return redirect()->route('admin.products.index')->with('success', 'Sku deleted!');
     }
 
     public function bulkDelete(Request $request)
     {
-        Product::destroy($request->input('dataID'));
+        Sku::destroy($request->input('dataID'));
 
         return response()->json(['success' => true, 'message' => 'Record Deleted']);
     }

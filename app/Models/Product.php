@@ -24,10 +24,10 @@ class Product extends Model
         return $this->belongsTo(SubCategory::class);
     }
 
-    // public function skus()
-    // {
-    //     return $this->hasMany(Sku::class);
-    // }
+    public function skus()
+    {
+        return $this->hasMany(Sku::class);
+    }
 
     protected static function booted()
     {
