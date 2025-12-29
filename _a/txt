@@ -78,3 +78,16 @@ inventory_movements
 - remarks (nullable)
 
 
+Check should be 
+Product -> Sku -> attributeValues
+
+Unique attributeValues combination for that product sku
+
+
+
+sku_code
+barcode
+bundle storage
+
+edit
+price and stock - NOTHING ELSE

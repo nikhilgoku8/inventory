@@ -57,6 +57,7 @@ class AttributeController extends Controller
         try {
             $validated = $request->validate([
                 'title' => 'required|string|max:255|unique:attributes,title,'. $dataID,
+                'sort_order' => 'nullable|numeric|min:0',
             ]);
 
             if ($isNew) {

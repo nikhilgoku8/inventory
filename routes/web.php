@@ -58,7 +58,13 @@ Route::prefix('iwm')->as('admin.')->group(function(){
             Route::post('/get_values_by_attribute/{id}', [AttributeValueController::class, 'get_values_by_attribute'])->name('get_values_by_attribute');
 
             Route::get('/products/{product}/skus/create', [SkuController::class, 'create'])->name('skus.create');
+            // Route::post('/products/{product}/skus', [SkuController::class, 'store'])->name('skus.store');
+
             Route::post('/products/{product}/skus', [SkuController::class, 'store'])->name('skus.store');
+            Route::get('/skus/{sku}/edit', [SkuController::class, 'edit'])->name('skus.edit');
+            Route::put('/skus/{sku}', [SkuController::class, 'update'])->name('skus.update');
+            Route::post('/skus/bulk-delete', [SkuController::class, 'bulkDelete'])->name('skus.bulk-delete');
+
 
     });
 

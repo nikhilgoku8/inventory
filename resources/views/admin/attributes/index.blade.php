@@ -56,6 +56,7 @@
                             <tr>
                                 <th>Attributes</th>
                                 <th>Slug</th>
+                                <th>Sort Order</th>
                                 <th>Created By</th>
                                 <th>Updated By</th>
                                 <th class="action">ACTION</th>
@@ -65,6 +66,7 @@
                                     <tr>
                                         <td>{{ $row->title }}</td>
                                         <td>{{ $row->slug }}</td>
+                                        <td>{{ $row->sort_order }}</td>
                                         <td>{{ $row->created_by }} <br> {{ $row->created_at }}</td>
                                         <td>{{ $row->updated_by }} <br> {{ $row->updated_at }}</td>
                                         <td class="action">

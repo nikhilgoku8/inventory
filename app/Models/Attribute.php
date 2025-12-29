@@ -10,6 +10,7 @@ class Attribute extends Model
 
     protected $fillable = [
         'title',
+        'sort_order',
         'created_by',
         'updated_by',
     ];

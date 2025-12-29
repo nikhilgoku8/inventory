@@ -115,6 +115,7 @@
                         <div class="input_boxes">
                             <div class="col-sm-4">
                                 <div class="input_box">
+                                    <div class="error form_error form-error-all_errors"></div>
                                     <input type="submit" name="submit" id="submit" value="Save" class="btn btn-primary">
                                 </div>
                             </div>
@@ -142,14 +143,14 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "@{{ route('admin.skus.store') }}",
+            url: "{{ route('admin.skus.store', $result->id) }}",
             data:  new FormData(this),
             dataType: 'json',
             cache: false,
             contentType: false,
             processData: false,
             success: function(result) {
-                location.href="@{{ route('admin.skus.index') }}";
+                location.href="{{ route('admin.products.edit', $result->id) }}";
             },
             error: function(data){
                 if (data.status === 422) {
@@ -206,9 +207,6 @@ $(document).ready(function() {
     });
 
 });
-
-
-
 
 $(document).on('change', '.attribute-id', function () {
     let $idSelect = $(this);
@@ -275,7 +273,7 @@ $(document).on('click', '.add-attribute', function() {
         <div class="input_boxes attribute-group">
             <div class="col-sm-4">
                 <div class="input_box">
-                    <label>Attribute ${attributeCount + 1}</label>
+                    <label>Attribute Type ${attributeCount + 1}</label>
                     <div class="error form_error form-error-attributes-${attributeCount}-id"></div>
                     <select name="attributes[${attributeCount}][id]" class="attribute-id">
                         <option value="" selected disabled>Select Attribute Type</option>

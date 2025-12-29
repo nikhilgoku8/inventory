@@ -5,11 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 use App\Models\Category;
 use App\Models\SubCategory;
 use App\Models\Product;
 use App\Models\Sku;
 use App\Models\Attribute;
+use App\Models\AttributeValue;
+
+use Picqer\Barcode\BarcodeGeneratorPNG;
 
 class SkuController extends Controller
 {
@@ -73,51 +77,98 @@ class SkuController extends Controller
         return view('admin.products.edit', $data);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, Product $product)
     {
-        return $this->handleSkuRequest($request, new Sku(), true);
+        return $this->handleSkuRequest($request, new Sku(), true, $product);
     }
 
     public function update(Request $request, Sku $sku)
     {
-        return $this->handleSkuRequest($request, $sku, false);
+        return $this->handleSkuRequest($request, $sku, false, $sku->product);
     }
 
-    public function string_filter($string){
-        $string = str_replace('--', '-', preg_replace('/[^A-Za-z0-9\-\']/', '', str_replace(' ', '-', str_replace("- ","-", str_replace(" -","-", str_replace("&","and", preg_replace("!\s+!"," ",strtolower($string))))))));
-        return $string;
-    }
+    // public function string_filter($string){
+    //     $string = str_replace('--', '-', preg_replace('/[^A-Za-z0-9\-\']/', '', str_replace(' ', '-', str_replace("- ","-", str_replace(" -","-", str_replace("&","and", preg_replace("!\s+!"," ",strtolower($string))))))));
+    //     return $string;
+    // }
 
-    private function handleSkuRequest(Request $request, Sku $sku, bool $isNew)
+    private function handleSkuRequest(Request $request, Sku $sku, bool $isNew, Product $product)
     {
         $dataID = $request->input('dataID');
         try {
 
             $rules = [
-                'sub_category_id' => 'required|exists:sub_categories,id',
-                'title' => 'required|string|max:255|unique:products,title,'.$dataID,
-                'description' => 'nullable|string',
-                'code' => ['required', 'regex:/^[A-Z]+(-[A-Z]+)*$/', 'unique:products,code,'.$dataID],
                 'image' => 'bail|required_without:existing_image|file|mimes:jpg,jpeg,png,webp|max:1024',
+                'price' => 'nullable|numeric',
+                'stock' => 'required|numeric|min:0',
+                'is_bundle' => 'required',
+                'attributes' => 'required|array|min:1',
+                'attributes.*.id' => 'required|exists:attributes,id|distinct',
+                'attributes.*.value' => 'required|exists:attribute_values,id|distinct',
             ];
 
-            $messages = [];
+            $messages = [
+                'required_without' => 'The :attribute field is required.'
+            ];
 
-            $attributes = [];
-
-            $validator = Validator::make($request->all(), $rules , $messages, $attributes);
+            $validator = Validator::make($request->all(), $rules , $messages, []);
 
             $validated = $validator->validated();
+            
+            // To cross check if the attribute value id belongs to the attribute type id
+            foreach ($validated['attributes'] as $attr) {
+                $isValid = DB::table('attribute_values')
+                    ->where('id', $attr['value'])
+                    ->where('attribute_id', $attr['id'])
+                    ->exists();
 
-            $validated['slug'] = $this->string_filter($validated['title']);
+                if (! $isValid) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Invalid attribute and value combination.',
+                        'errors' => [ 'all_errors' => 'Invalid attribute and value combination.'],
+                    ], 422);
+                }
+            }
+
+            $incomingAttributeValueIds = collect($validated['attributes'])
+                ->pluck('value')
+                // ->map('intval')
+                ->map(fn ($v) => (int) $v)
+                ->sort()
+                ->values()
+                ->toArray();
+
+
+            $product->load('skus.attributeValues:id');
+
+            // foreach ($product->skus->where('id', '!=', $skuId) as $sku) {
+            foreach ($product->skus as $sku) {
+
+                $existing = $sku->attributeValues
+                    ->pluck('id')
+                    ->sort()
+                    ->values()
+                    ->toArray();
+
+                if ($existing === $incomingAttributeValueIds) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'This SKU variant already exists for this product.',
+                        'errors' => [ 'all_errors' => 'This SKU variant already exists for this product.'],
+                    ], 422);
+                }
+            }
+
+            $validated['product_id'] = $product->id;
 
             // Need to set folder path for file manipulation
             $uploadRoot = base_path(env('UPLOAD_ROOT'));
-            $imagesFolder = $uploadRoot . '/products';
+            $imagesFolder = $uploadRoot . '/products/'. $product->slug;
 
             if($request->hasFile('image')){
                 $file = $validated['image'];
-                $fileName = $validated['slug'] . '_' . uniqid() . '_' . date('Ymdhis') . '.' . $file->getClientOriginalExtension();
+                $fileName = $product->slug . '_' . uniqid() . '_' . date('Ymdhis') . '.' . $file->getClientOriginalExtension();
                 $file->move($imagesFolder, $fileName);
                 $validated['image'] = $fileName;
 
@@ -139,12 +190,32 @@ class SkuController extends Controller
             }
             $validated['updated_by'] = session('username');
 
+            $attribute_codes = AttributeValue::whereIn('attribute_values.id', $incomingAttributeValueIds)
+                ->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')
+                ->orderBy('attributes.sort_order')
+                ->pluck('attribute_values.code')
+                ->implode('-');
+
+            // dd($attribute_codes);
+
+            $validated['sku_code'] = $product->code .'-'.$attribute_codes;
+
+            // Generate via sku_code and store barcode
+            $generator = new BarcodeGeneratorPNG();
+            $barcodeData = $generator->getBarcode($validated['sku_code'], $generator::TYPE_CODE_128);
+
+            $validated['barcode'] = $product->slug . '_barcode_' . uniqid() . '_' . date('Ymdhis') . '.png';
+
+            file_put_contents($imagesFolder . '/' . $validated['barcode'], $barcodeData);
+
             // Directly handle the save/update logic here
             if ($isNew) {
                 $sku = Sku::create($validated);
             } else {
                 $sku->update($validated);
             }
+
+            $sku->attributeValues()->sync($incomingAttributeValueIds);
 
             return response()->json([
                 'status' => 'success',

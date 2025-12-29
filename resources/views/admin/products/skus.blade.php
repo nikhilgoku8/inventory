@@ -19,12 +19,12 @@
                         <div class="sub_title"> </div>
                     </div>
                     <div class="right_section">
-                        <div class="purple_hollow_btn">
+                        <span class="purple_hollow_btn">
                             <a href="{{ route('admin.skus.create', $result->id) }}">Add New</a>
-                        </div>
-                        <div class="orange_filled_btn">
+                        </span>
+                        <span class="orange_filled_btn">
                             <a id="delete_records">Delete</a>
-                        </div>
+                        </span>
                     </div>
                 </div>
                 <div class="details_table">
@@ -58,11 +58,20 @@
                                         </td>
                                         <td>{{ $row->price }}</td>
                                         <td>{{ $row->stock }}</td>
+                                        <td>
+                                            @if(!empty($row->attributeValues) && count($row->attributeValues) > 0)
+                                                <ul>
+                                                    @foreach($row->attributeValues as $attributeValue)
+                                                        <li>{{ $attributeValue->attribute->title }} :- {{ $attributeValue->value }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            @endif
+                                        </td>
                                         <td>{{ $row->is_bundle ? 'Yes' : 'No' }}</td>
                                         <td>{{ $row->created_by }} <br> {{ $row->created_at }}</td>
                                         <td>{{ $row->updated_by }} <br> {{ $row->updated_at }}</td>
                                         <td class="action">
-                                            <a href="{{ route('admin.products.edit', $row->id) }}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                                            <a href="{{ route('admin.skus.edit', $row->id) }}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
                                             <span class="checkbox">
                                                 <input name="dataID" class="styled" type="checkbox" value="{{ $row->id }}">
                                                 <label for="checkbox1"></label>
@@ -104,7 +113,7 @@ $(document).ready(function() {
         if (confirm('Are you sure you want to delete these records?')) {
             $.ajax({
                 type: "POST",
-                url: "{{ route('admin.products.bulk-delete') }}",
+                url: "{{ route('admin.skus.bulk-delete') }}",
                 data: {"_token":"{{ csrf_token() }}", "dataID":dataID},
                 dataType: 'json',
                 success: function(response) {
