@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('sku_code', 255)->unique();
             $table->string('barcode', 255);
             $table->string('image', 255)->nullable();
-            $table->integer('price')->nullable();
+            // $table->integer('price')->nullable();
             $table->integer('stock');
             $table->boolean('is_bundle')->default(0);
             $table->string('created_by', 50)->nullable();

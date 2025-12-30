@@ -6,10 +6,10 @@
         <div class="col-lg-12">
             <div class="page-header my_style">
                 <div class="left_section">
-                    <h1 class="">Products</h1>
+                    <h1 class="">Skus</h1>
                     <ul class="breadcrumb">
                         <li><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                        <li><a href="{{ route('admin.products.index') }}">Products</a></li>
+                        <li><a href="{{ route('admin.products.edit', $result->id) }}">Product - {{$result->title}}</a></li>
                     </ul>    
                 </div>
                 
@@ -33,7 +33,7 @@
                     <div class="page-header my_style less_margin">
                         <div class="left_section">
                             <div class="title_text">
-                                <div class="title">Edit Product</div>
+                                <div class="title">Edit Sku</div>
                                 <div class="sub_title">Please fillup the form </div>
                             </div>
                         </div>
@@ -49,64 +49,16 @@
                         <div class="input_boxes">
                             <div class="col-sm-6">
                                 <div class="input_box">
-                                    <label>Category</label>
-                                    <div class="error form_error" id="form-error-category_id"></div>
-                                    <select name="category_id">
-                                        <option value="">Select Category</option>
-                                        @if(!empty($categories) && count($categories) > 0)
-                                            @foreach($categories as $category)
-                                                <option value="{{ $category->id }}" @if($result->subCategory->category->id == $category->id) selected @endif>{{ $category->title }}</option>
-                                            @endforeach
-                                        @endif
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="input_box">
-                                    <label>Sub Category</label>
-                                    <div class="error form_error" id="form-error-sub_category_id"></div>
-                                    <select name="sub_category_id">
-                                        <option value="" selected disabled>Sub Category</option>
-                                        @if(!empty($subCategories) && count($subCategories) > 0)
-                                            @foreach($subCategories as $subCategory)
-                                                <option value="{{ $subCategory->id }}" @if($result->subCategory->id == $subCategory->id) selected @endif>{{ $subCategory->title }}</option>
-                                            @endforeach
-                                        @endif
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-sm-12">
-                                <div class="input_box">
-                                    <label>Title</label>
-                                    <div class="error form_error" id="form-error-title"></div>
-                                    <input type="text" name="title" placeholder="Title" value="{{ $result->title }}">
-                                </div>
-                            </div>
-                            <div class="col-sm-12">
-                                <div class="input_box">
-                                    <label>Description</label>
-                                    <div class="error form_error" id="form-error-description"></div>
-                                    <textarea name="description" class="toolbar" placeholder="Description">{{ $result->description }}</textarea>
-                                </div>
-                            </div>
-                            <div class="col-sm-12">
-                                <div class="input_box">
-                                    <label>Code</label>
-                                    <div class="error form_error form-error-code"></div>
-                                    <input type="text" name="code" placeholder="Code"  oninput="this.value = this.value.toUpperCase()" value="{{ $result->code }}">
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="input_box">
                                     <label>Image</label>
                                     <div class="error form_error form-error-image"></div>
-                                    @if(!empty($result->image))
-                                    <div class="existing_file_wrapper">
-                                        To replace <a href="{{ asset('uploads/products/'.$result->image) }}" target="_blank"><img src="{{ asset('uploads/products/'.$result->image) }}" width="50px">Existing Image</a> select below
-                                    </div>
-                                    <input type="hidden" name="existing_image" value="{{ $result->image }}">
-                                    @endif
-                                    <input type="file" name="image" placeholder="Replace Image">
+                                    <img src="{{ $result->image }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="input_box">
+                                    <label>Stock</label>
+                                    <div class="error form_error form-error-stock"></div>
+                                    <input type="number" name="stock" placeholder="Stock" value="{{ $result->stock }}">
                                 </div>
                             </div>
                             <div class="clr"></div>
@@ -114,48 +66,85 @@
 
                         <div class="attributes_wrapper">
                             <div class="attributes-section">
-                                @if(!empty($result->attributeValues))
-                                    @foreach($result->attributeValues as $attributeRow)
-                                        <div class="input_boxes attribute-group">
-                                            <!----Product ----->
-                                            <div class="col-sm-4">
-                                                <div class="input_box">
-                                                    <label>Attribute Type {{ $loop->iteration }}</label>
-                                                    <div class="error form_error form-error-attributes-{{$loop->iteration - 1}}-id"></div>
-                                                    <select name="attributes[{{$loop->iteration - 1}}][id]" class="attribute-id">
-                                                        <option value="">Select Attribute Type</option>
-                                                        @foreach ($attributeTypes as $attributeType)
-                                                        <option value="{{$attributeType->id}}" @if($attributeRow->attributeType->id == $attributeType->id) selected @endif>{{$attributeType->title}}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-5">
-                                                <div class="input_box">
-                                                    <label>Attribuite Value</label>
-                                                    <div class="error form_error form-error-attributes-{{$loop->iteration - 1}}-value"></div>
-                                                    <select name="attributes[{{$loop->iteration - 1}}][value]" class="custom_select">
-                                                        <option value="">Select Attribute Value</option>
-                                                        @if(!empty($attributeRow->attributeType->attributeValues))
-                                                            @foreach($attributeRow->attributeType->attributeValues as $row)
-                                                            <option value="{{ $row->id }}" @if($attributeRow->id == $row->id) selected @endif>{{ $row->value }}</option>
-                                                            @endforeach
-                                                        @endif
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            @if($loop->iteration != 1)
-                                            <div class="col-sm-3">
-                                                <div class="input_box orange_filled_btn">
-                                                    <button type="button" class="remove-attribute">Remove Attribute</button>
-                                                </div>
-                                            </div>
-                                            @endif
+                                <div class="input_boxes attribute-group">
+                                    <!----Product ----->
+                                    <div class="col-sm-4">
+                                        <div class="input_box">
+                                            <label>Attribute Type 1</label>
+                                            <div class="error form_error form-error-attributes-0-id"></div>
+                                            <select name="attributes[0][id]" class="attribute-id">
+                                                <option value="">Select Attribute Type</option>
+                                                @foreach ($attributes as $attribute)
+                                                <option value="{{$attribute->id}}">{{$attribute->title}}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
-                                    @endforeach
-                                @endif
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <div class="input_box">
+                                            <label>Value</label>
+                                            <div class="error form_error form-error-attributes-0-value"></div>
+                                            <select name="attributes[0][value]" class="custom_select">
+                                                <option value="">Select Attribute Value</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <input type="button" name="button" value="Add Attribute" class="add-attribute blue_filled_btn">
+                        </div>
+                        <br>
+                        <br>
+
+                        <div class="input_boxes">
+                            <div class="col-sm-12">
+                                <div class="input_box">
+                                    <label>Is_Bundle</label>
+                                    <div class="error form_error form-error-is_bundle"></div>
+                                    <select name="is_bundle">
+                                        <option value="1">Yes</option>
+                                        <option value="0" selected>No</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="clr"></div>
+                        </div>
+
+                        <div class="bundles_wrapper">
+                            <div class="bundles-section">
+                                <div class="input_boxes bundle-group">
+                                    <!----Product ----->
+                                    <div class="col-sm-4">
+                                        <div class="input_box">
+                                            <label>Product 1</label>
+                                            <div class="error form_error form-error-bundles-0-product_id"></div>
+                                            <select name="bundles[0][product_id]" class="bundle-product_id">
+                                                <option value="">Select Product</option>
+                                                @foreach ($products as $product)
+                                                    <option value="{{$product->id}}">{{$product->title}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="input_box">
+                                            <label>SKU</label>
+                                            <div class="error form_error form-error-bundles-0-sku_id"></div>
+                                            <select name="bundles[0][sku_id]" class="custom_select">
+                                                <option value="">Select Sku</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="input_box">
+                                            <label>Quantity</label>
+                                            <div class="error form_error form-error-bundles-0-quantity"></div>
+                                            <input type="number" name="bundles[0][quantity]" min="0">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="button" name="button" value="Add Product Sku" class="add-bundle blue_filled_btn">
                         </div>
                         <br>
                         <br>

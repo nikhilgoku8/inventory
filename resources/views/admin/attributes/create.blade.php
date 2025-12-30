@@ -57,7 +57,7 @@
                             <div class="input_box">
                                 <label>Sort Order</label>
                                 <div class="error form_error" id="form-error-sort_order"></div>
-                                <input type="number" name="sort_order" placeholder="Sort_Order">
+                                <input type="number" name="sort_order" placeholder="Sort_Order" value="0">
                             </div>
                         </div>
                         <div class="clr"></div>

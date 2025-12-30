@@ -13,7 +13,7 @@ class Sku extends Model
         'sku_code',
         'barcode',
         'image',
-        'price',
+        // 'price',
         'stock',
         'is_bundle',
         'created_by',
@@ -28,6 +28,24 @@ class Sku extends Model
     public function attributeValues()
     {
         return $this->belongsToMany(AttributeValue::class, 'sku_attributes')->withTimestamps();
+    }
+    
+    // bundles this SKU is composed of
+    public function bundleItems()
+    {
+        return $this->hasMany(
+            SkuBundle::class,
+            'bundle_sku_id'
+        );
+    }
+
+    // bundles where this SKU is a child
+    public function parentBundles()
+    {
+        return $this->hasMany(
+            SkuBundle::class,
+            'child_sku_id'
+        );
     }
 
     protected static function booted()

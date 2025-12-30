@@ -56,6 +56,7 @@ Route::prefix('iwm')->as('admin.')->group(function(){
             Route::resource('attribute-values', AttributeValueController::class);
             Route::post('/attribute-values/bulk-delete', [AttributeValueController::class, 'bulkDelete'])->name('attribute-values.bulk-delete');
             Route::post('/get_values_by_attribute/{id}', [AttributeValueController::class, 'get_values_by_attribute'])->name('get_values_by_attribute');
+            
 
             Route::get('/products/{product}/skus/create', [SkuController::class, 'create'])->name('skus.create');
             // Route::post('/products/{product}/skus', [SkuController::class, 'store'])->name('skus.store');
@@ -64,6 +65,7 @@ Route::prefix('iwm')->as('admin.')->group(function(){
             Route::get('/skus/{sku}/edit', [SkuController::class, 'edit'])->name('skus.edit');
             Route::put('/skus/{sku}', [SkuController::class, 'update'])->name('skus.update');
             Route::post('/skus/bulk-delete', [SkuController::class, 'bulkDelete'])->name('skus.bulk-delete');
+            Route::post('/get_skus_by_product/{id}', [SkuController::class, 'get_skus_by_product'])->name('get_skus_by_product');
 
 
     });

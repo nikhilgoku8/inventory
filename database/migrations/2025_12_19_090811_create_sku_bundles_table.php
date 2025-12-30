@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('bundle_sku_id')->constrained('skus')->onDelete('cascade');
             $table->foreignId('child_sku_id')->constrained('skus')->onDelete('cascade');
             $table->integer('quantity');
+            $table->string('created_by', 50)->nullable();
+            $table->string('updated_by', 50)->nullable();
             $table->timestamps();
         });
     }

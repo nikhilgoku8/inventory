@@ -38,8 +38,7 @@
                                 <th>Stock</th>
                                 <th>Attributes</th>
                                 <th>Is_Bundle</th>
-                                <th>Created By</th>
-                                <th>Updated By</th>
+                                <th>Created By / Updated By</th>
                                 <th class="action">ACTION</th>
                             </tr>
                             @if(!empty($result->skus))
@@ -57,7 +56,20 @@
                                             </a>
                                         </td>
                                         <td>{{ $row->price }}</td>
-                                        <td>{{ $row->stock }}</td>
+                                        <td>
+                                            @if($row->is_bundle)
+                                                @php
+                                                    $bundleStock = $row->bundleItems
+                                                    ->map(function ($item) {
+                                                        return intdiv($item->childSku->stock, $item->quantity);
+                                                    })
+                                                    ->min();
+                                                @endphp
+                                                {{$bundleStock}}
+                                            @else
+                                                {{ $row->stock }}
+                                            @endif
+                                        </td>
                                         <td>
                                             @if(!empty($row->attributeValues) && count($row->attributeValues) > 0)
                                                 <ul>
@@ -67,9 +79,32 @@
                                                 </ul>
                                             @endif
                                         </td>
-                                        <td>{{ $row->is_bundle ? 'Yes' : 'No' }}</td>
-                                        <td>{{ $row->created_by }} <br> {{ $row->created_at }}</td>
-                                        <td>{{ $row->updated_by }} <br> {{ $row->updated_at }}</td>
+                                        <td>
+                                            <!-- @{{ $row->is_bundle ? 'Yes' : 'No' }} -->
+                                            @if($row->is_bundle && !empty($row->bundleItems) && count($row->bundleItems) > 0)
+                                                @foreach($row->bundleItems as $item)
+                                                    Sku Code - {{$item->childSku->sku_code}}<br>
+                                                    {{$item->childSku->product->title}}<br>
+                                                    Quantity - {{$item->quantity}}
+                                                    <br>
+                                                    Attributes - 
+                                                    @if(!empty($item->childSku->attributeValues) && count($item->childSku->attributeValues) > 0)
+                                                        <ul>
+                                                            @foreach($item->childSku->attributeValues as $attributeValue)
+                                                                <li>{{ $attributeValue->attribute->title }} :- {{ $attributeValue->value }}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    @endif
+                                                    <br>
+                                                    <br>
+                                                @endforeach
+                                            @else
+                                                No
+                                            @endif
+                                        </td>
+                                        <td>{{ $row->created_by }} <br> {{ $row->created_at }}
+                                            <br>/<br>
+                                            {{ $row->updated_by }} <br> {{ $row->updated_at }}</td>
                                         <td class="action">
                                             <a href="{{ route('admin.skus.edit', $row->id) }}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
                                             <span class="checkbox">

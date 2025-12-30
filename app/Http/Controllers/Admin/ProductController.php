@@ -62,7 +62,7 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
-        $data['result'] = $product;
+        $data['result'] = $product->load('skus');;
         $data['categories'] = Category::all();
         // $data['subCategories'] = SubCategory::all();
         $data['subCategories'] = SubCategory::where('category_id', $product->subCategory->category_id)->get();

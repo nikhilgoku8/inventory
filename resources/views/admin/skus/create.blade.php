@@ -53,28 +53,18 @@
                                     <input type="file" name="image">
                                 </div>
                             </div>
-                            <div class="col-sm-12">
+                            <!-- <div class="col-sm-12">
                                 <div class="input_box">
-                                    <label>Price</label>
+                                    <label>Price (Nullable)</label>
                                     <div class="error form_error form-error-price"></div>
                                     <input type="number" name="price" placeholder="Price" step="0.01">
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="col-sm-12">
                                 <div class="input_box">
                                     <label>Stock</label>
                                     <div class="error form_error form-error-stock"></div>
                                     <input type="number" name="stock" placeholder="Stock">
-                                </div>
-                            </div>
-                            <div class="col-sm-12">
-                                <div class="input_box">
-                                    <label>Is_Bundle</label>
-                                    <div class="error form_error form-error-is_bundle"></div>
-                                    <select name="is_bundle">
-                                        <option value="1">Yes</option>
-                                        <option value="0" selected>No</option>
-                                    </select>
                                 </div>
                             </div>
                             <div class="clr"></div>
@@ -113,9 +103,63 @@
                         <br>
 
                         <div class="input_boxes">
+                            <div class="col-sm-12">
+                                <div class="input_box">
+                                    <label>Is_Bundle</label>
+                                    <div class="error form_error form-error-is_bundle"></div>
+                                    <select name="is_bundle">
+                                        <option value="1">Yes</option>
+                                        <option value="0" selected>No</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="clr"></div>
+                        </div>
+
+                        <div class="bundles_wrapper">
+                            <div class="bundles-section">
+                                <div class="input_boxes bundle-group">
+                                    <!----Product ----->
+                                    <div class="col-sm-4">
+                                        <div class="input_box">
+                                            <label>Product 1</label>
+                                            <div class="error form_error form-error-bundles-0-product_id"></div>
+                                            <select name="bundles[0][product_id]" class="bundle-product_id">
+                                                <option value="">Select Product</option>
+                                                @foreach ($products as $product)
+                                                    <option value="{{$product->id}}">{{$product->title}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="input_box">
+                                            <label>SKU</label>
+                                            <div class="error form_error form-error-bundles-0-sku_id"></div>
+                                            <select name="bundles[0][sku_id]" class="custom_select">
+                                                <option value="">Select Sku</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="input_box">
+                                            <label>Quantity</label>
+                                            <div class="error form_error form-error-bundles-0-quantity"></div>
+                                            <input type="number" name="bundles[0][quantity]" min="0">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="button" name="button" value="Add Product Sku" class="add-bundle blue_filled_btn">
+                        </div>
+                        <br>
+                        <br>
+
+                        <div class="input_boxes">
                             <div class="col-sm-4">
                                 <div class="input_box">
                                     <div class="error form_error form-error-all_errors"></div>
+                                    <div class="error form_error form-error-bundles"></div>
                                     <input type="submit" name="submit" id="submit" value="Save" class="btn btn-primary">
                                 </div>
                             </div>
@@ -330,6 +374,135 @@ $(document).on('click', '.remove-attribute', function() {
         let $productAttributeValueContent = $(this).find('[name*=value]');
         $productAttributeValueContent.attr('name', `attributes[${index}][value]`);
         $productAttributeValueContent.prev('.form_error').attr('class', `error form_error form-error-attributes-${index}-value`);
+    });
+});
+
+</script>
+
+<script>
+
+$(document).on('change', '.bundle-product_id', function () {
+    let $idSelect = $(this);
+    let bundleId = $idSelect.val();
+
+    var token = $('meta[name="csrf-token"]').attr('content');
+
+    // Extract index from name, e.g., "bundles[0][id]"
+    let nameAttr = $idSelect.attr('name');
+    let match = nameAttr.match(/^bundles\[(\d+)]\[product_id]$/);
+    if (match) {
+        let index = match[1];
+        let $valueSelect = $(`select[name="bundles[${index}][sku_id]"]`);
+    // console.log($valueSelect);
+
+        if (!bundleId) {
+            $valueSelect.html('<option value="">Select Sku</option>');
+            return;
+        }
+
+        // Fetch bundle values from server
+        $.ajax({
+            url: "{{ route('admin.get_skus_by_product', ':id') }}".replace(':id', bundleId),
+            method: 'POST',
+            data: { _token: token },
+            success: function (data) {
+                // console.log(data);
+                $valueSelect.empty().append('<option value="" disabled selected>Select Sku</option>');
+
+                $.each(data, function (key, value) {
+                    $valueSelect.append('<option value="' + value.id + '">' + value.value + '</option>');
+                });
+
+                setTimeout(function() {
+                    $(".custom_select").select2({
+                        tags:true
+                    });
+                }, 100);
+            }
+        });
+    }
+});
+
+
+$(document).on('click', '.add-bundle', function() {
+
+    let $bundleWrapper = $(this).closest('.bundles_wrapper');
+    let $bundlesSection = $bundleWrapper.find('.bundles-section');
+    
+    let bundleCount = $bundlesSection.find('.bundle-group').length;
+
+    let newBundleGroup = `
+        <div class="input_boxes bundle-group">
+            <div class="col-sm-4">
+                <div class="input_box">
+                    <label>Product ${bundleCount + 1}</label>
+                    <div class="error form_error form-error-bundles-${bundleCount}-product_id"></div>
+                    <select name="bundles[${bundleCount}][product_id]" class="bundle-product_id">
+                        <option value="" selected disabled>Select Product</option>
+                        @foreach ($products as $product)
+                            <option value="{{$product->id}}">{{$product->title}}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="input_box">
+                    <label>SKU</label>
+                    <div class="error form_error form-error-bundles-${bundleCount}-sku_id"></div>    
+                    <select name="bundles[${bundleCount}][sku_id]" class="custom_select">
+                        <option value="" selected disabled>Select SKU</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="input_box">
+                    <label>Quantity</label>
+                    <div class="error form_error form-error-bundles-${bundleCount}-quantity"></div>
+                    <input type="number" name="bundles[${bundleCount}][quantity]" min="0">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="input_box orange_filled_btn">
+                    <button type="button" class="remove-bundle" style="margin: 0;">Remove Product Sku</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    $bundlesSection.append(newBundleGroup);
+
+    setTimeout(function() {
+        $("select").select2();
+
+        $(".custom_select").select2({
+            tags:true
+        });
+    }, 100);
+});
+
+$(document).on('click', '.remove-bundle', function() {
+    let $bundleWrapper = $(this).closest('.bundles_wrapper');
+    let $bundlesSection = $bundleWrapper.find('.bundles-section');
+
+    $(this).closest('.bundle-group').remove();
+
+    // Update labels (optional)
+    $bundlesSection.find('.bundle-group').each(function(index) {
+        $(this).find('label:first').text(`Product ${index + 1}`);
+
+        // let $productSelect = $(this).find('select');
+        let $productSelect = $(this).find('[name*=product_id]');
+        $productSelect.attr('name', `bundles[${index}][product_id]`);
+        $productSelect.prev('.form_error').attr('class', `error form_error form-error-bundles-${index}-product_id`);
+
+        // let $productSKU = $(this).find('select');
+        let $productSKU = $(this).find('[name*=sku_id]');
+        $productSKU.attr('name', `bundles[${index}][sku_id]`);
+        $productSKU.prev('.form_error').attr('class', `error form_error form-error-bundles-${index}-sku_id`);
+
+        let $productSKUQuantity = $(this).find('[name*=quantity]');
+        $productSKUQuantity.attr('name', `bundles[${index}][quantity]`);
+        $productSKUQuantity.prev('.form_error').attr('class', `error form_error form-error-bundles-${index}-quantity`);
     });
 });
 

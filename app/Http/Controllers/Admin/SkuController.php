@@ -10,6 +10,7 @@ use App\Models\Category;
 use App\Models\SubCategory;
 use App\Models\Product;
 use App\Models\Sku;
+use App\Models\SkuBundle;
 use App\Models\Attribute;
 use App\Models\AttributeValue;
 
@@ -57,6 +58,7 @@ class SkuController extends Controller
     {
         $data['result'] = $product;
         $data['attributes'] = Attribute::all();
+        $data['products'] = Product::all();
         return view('admin.skus.create', $data);
     }
 
@@ -99,12 +101,16 @@ class SkuController extends Controller
 
             $rules = [
                 'image' => 'bail|required_without:existing_image|file|mimes:jpg,jpeg,png,webp|max:1024',
-                'price' => 'nullable|numeric',
+                // 'price' => 'nullable|numeric',
                 'stock' => 'required|numeric|min:0',
-                'is_bundle' => 'required',
                 'attributes' => 'required|array|min:1',
                 'attributes.*.id' => 'required|exists:attributes,id|distinct',
                 'attributes.*.value' => 'required|exists:attribute_values,id|distinct',
+                'is_bundle' => 'required|boolean',
+                'bundles' => 'required_if:is_bundle,1|array|min:1',
+                'bundles.*.product_id' => 'nullable|required_if:is_bundle,1|exists:products,id',
+                'bundles.*.sku_id' => 'nullable|required_if:is_bundle,1|exists:skus,id|distinct',
+                'bundles.*.quantity' => 'nullable|required_if:is_bundle,1|numeric|min:1',
             ];
 
             $messages = [
@@ -114,6 +120,8 @@ class SkuController extends Controller
             $validator = Validator::make($request->all(), $rules , $messages, []);
 
             $validated = $validator->validated();
+
+            // dd($validated['is_bundle']);
             
             // To cross check if the attribute value id belongs to the attribute type id
             foreach ($validated['attributes'] as $attr) {
@@ -217,6 +225,20 @@ class SkuController extends Controller
 
             $sku->attributeValues()->sync($incomingAttributeValueIds);
 
+            // Create if bundle
+            if($validated['is_bundle']){
+                foreach($validated['bundles'] as $bundle){
+                    SkuBundle::create([
+                        'bundle_sku_id' => $sku->id,
+                        'child_sku_id'  => $bundle['sku_id'],
+                        'quantity'      => $bundle['quantity'],
+                    ]);
+                }
+
+                // Bundle Stock is derived so need to set it as 0
+                $sku->update(['stock' => 0]);
+            }
+
             return response()->json([
                 'status' => 'success',
                 'message' => $isNew ? 'Sku created successfully!' : 'Sku updated successfully!',
@@ -249,5 +271,44 @@ class SkuController extends Controller
         Sku::destroy($request->input('dataID'));
 
         return response()->json(['success' => true, 'message' => 'Record Deleted']);
+    }
+
+    public function get_skus_by_product($id){
+        // $data = [];
+        // $skus = Sku::where('product_id',$id)->get();
+        // foreach ($skus as $sku) {
+        //     $i = 1;
+        //     $attribute_values = '';
+        //     foreach ($sku->attributeValues as $attribute){
+        //         if($i != 1){
+        //             $slash = ' / ';
+        //         }else{
+        //             $slash = '';
+        //         }
+        //         $attribute_values .= $slash . $attribute->value;
+        //         $i++;
+        //     }
+
+        //     $data[] = [
+        //         'id' => $sku->id,
+        //         'value' => $attribute_values,
+        //     ];
+        // }
+        // return $data;
+
+        // This I got with ChatGPT
+        return Sku::with('attributeValues')
+        ->where('product_id', $id)
+        ->where('is_bundle', 0)
+        ->get()
+        ->map(function ($sku) {
+            return [
+                'id' => $sku->id,
+                'value' => $sku->attributeValues
+                    ->pluck('value')
+                    ->implode(' / ')
+            ];
+        })
+        ->toArray();
     }
 }

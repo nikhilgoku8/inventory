@@ -91,3 +91,9 @@ bundle storage
 
 edit
 price and stock - NOTHING ELSE
+
+
+Make separate page to view SKU
+Add stock and Update inventory_movements and sku stock
+Deductions on scanner update inventory_movements and sku stock
+Show lowest sku products on dashboard
