@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 30, 2025 at 09:11 AM
+-- Generation Time: Dec 31, 2025 at 01:19 PM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.16
 
@@ -69,7 +69,8 @@ CREATE TABLE `attributes` (
 
 INSERT INTO `attributes` (`id`, `title`, `sort_order`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
 (2, 'Color', 0, 'Admin', 'Admin', '2025-12-23 01:06:48', '2025-12-24 03:29:32'),
-(3, 'Shape', 0, 'Admin', 'Admin', '2025-12-23 01:06:53', '2025-12-24 03:29:41');
+(3, 'Shape', 0, 'Admin', 'Admin', '2025-12-23 01:06:53', '2025-12-24 03:29:41'),
+(6, 'Size', 0, 'Admin', 'Admin', '2025-12-31 01:14:50', '2025-12-31 01:14:50');
 
 -- --------------------------------------------------------
 
@@ -112,7 +113,11 @@ INSERT INTO `attribute_values` (`id`, `attribute_id`, `value`, `code`, `created_
 (21, 2, 'Cream', 'CRM', 'Admin', 'Admin', '2025-12-24 03:52:04', '2025-12-24 03:52:04'),
 (22, 2, 'Gold', 'GLD', 'Admin', 'Admin', '2025-12-24 03:52:13', '2025-12-24 03:52:13'),
 (23, 2, 'Silver', 'SLV', 'Admin', 'Admin', '2025-12-24 03:52:22', '2025-12-24 03:52:22'),
-(40, 2, 'Tricolor', 'TRC', 'Admin', 'Admin', '2025-12-24 06:51:28', '2025-12-24 06:51:28');
+(40, 2, 'Tricolor', 'TRC', 'Admin', 'Admin', '2025-12-24 06:51:28', '2025-12-24 06:51:28'),
+(41, 6, 'M', 'M', 'Admin', 'Admin', '2025-12-31 01:14:58', '2025-12-31 01:14:58'),
+(42, 6, 'L', 'L', 'Admin', 'Admin', '2025-12-31 01:15:12', '2025-12-31 01:15:12'),
+(43, 6, '2.5 x 2.5 Cms', '2525MM', 'Admin', 'Admin', '2025-12-31 01:16:58', '2025-12-31 01:16:58'),
+(44, 6, '3 x 3 cms', '3030MM', 'Admin', 'Admin', '2025-12-31 01:17:32', '2025-12-31 01:17:32');
 
 -- --------------------------------------------------------
 
@@ -311,7 +316,8 @@ INSERT INTO `sub_categories` (`id`, `category_id`, `title`, `slug`, `created_by`
 (3, 1, 'Stoles', 'stoles', 'Admin', 'Admin', '2025-12-22 07:33:01', '2025-12-23 05:16:46'),
 (4, 2, 'Badges', 'badges', 'Admin', 'Admin', '2025-12-22 07:33:07', '2025-12-23 05:17:01'),
 (6, 3, 'Bags', 'bags', 'Admin', 'Admin', '2025-12-22 07:33:15', '2025-12-23 05:20:08'),
-(8, 4, 'Bookmarks', 'bookmarks', 'Admin', 'Admin', '2025-12-23 05:17:51', '2025-12-23 05:17:51');
+(8, 4, 'Bookmarks', 'bookmarks', 'Admin', 'Admin', '2025-12-23 05:17:51', '2025-12-23 05:17:51'),
+(9, 4, 'Showpiece', 'showpiece', 'Admin', 'Admin', '2025-12-31 01:14:42', '2025-12-31 01:14:42');
 
 --
 -- Indexes for dumped tables
@@ -408,13 +414,13 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT for table `attributes`
 --
 ALTER TABLE `attributes`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `attribute_values`
 --
 ALTER TABLE `attribute_values`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -462,7 +468,7 @@ ALTER TABLE `sku_bundles`
 -- AUTO_INCREMENT for table `sub_categories`
 --
 ALTER TABLE `sub_categories`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Constraints for dumped tables
