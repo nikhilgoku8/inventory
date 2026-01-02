@@ -27,6 +27,14 @@
     <div class="row">
 
             <div class="my_panel form_box">
+                
+                @if(Session::has('success'))
+                    <div class="alert alert-success">{{Session::get('success')}}</div>
+                @endif
+                @if(Session::has('error'))
+                    <div class="alert alert-danger">{{Session::get('error')}}</div>
+                @endif
+                
                 <form id="data_form" action="" method="POST" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="dataID" value="{{ $result->id }}">

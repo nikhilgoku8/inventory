@@ -1,0 +1,25 @@
+https://inventory.luvmyindia.com/iwm/login
+admin@gmail.com
+password
+
+Modules Done
+Manage
+	Category
+	Sub Category
+	Product
+	Attribute
+	Attribute Values
+	Sku
+		Stock Updation
+		Inventory Movements/History
+		Sku Bundles
+	Scan QR
+
+Pending
+	Simple UI/UX after QR scan for stock decrement
+
+
+inventory.luvmyindia.com
+MySql Database DB
+u915780490_inventory
+dBS:^M@0

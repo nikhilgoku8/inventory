@@ -53,13 +53,6 @@
                                     <input type="file" name="image">
                                 </div>
                             </div>
-                            <!-- <div class="col-sm-12">
-                                <div class="input_box">
-                                    <label>Price (Nullable)</label>
-                                    <div class="error form_error form-error-price"></div>
-                                    <input type="number" name="price" placeholder="Price" step="0.01">
-                                </div>
-                            </div> -->
                             <div class="col-sm-12">
                                 <div class="input_box">
                                     <label>Stock</label>

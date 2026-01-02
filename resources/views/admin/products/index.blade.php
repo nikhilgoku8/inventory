@@ -40,7 +40,6 @@
                     <div class="alert alert-danger">{{Session::get('error')}}</div>
                 @endif
 
-
                 <div class="upper_sec">
                     <div class="left_section">
                         <div class="title">Products Data</div>

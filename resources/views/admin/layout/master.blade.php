@@ -21,7 +21,7 @@
                 <div class="last_row">
                     
                     <div class="left_section">
-                        All Rights Reserved @ <b>Anish</b>.
+                        All Rights Reserved @ <b>Inventory</b>.
                     </div>
                     <div class="right_section">
                     </div>

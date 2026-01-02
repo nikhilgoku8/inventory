@@ -34,7 +34,6 @@
                                 <th>Sku Code</th>
                                 <th>Barcode</th>
                                 <th>Image</th>
-                                <th>Price</th>
                                 <th>Stock</th>
                                 <th>Attributes</th>
                                 <th>Is_Bundle</th>
@@ -55,7 +54,6 @@
                                                 <img src="{{ asset('uploads/products/'.$result->slug.'/'.$row->image) }}" width="50px">
                                             </a>
                                         </td>
-                                        <td>{{ $row->price }}</td>
                                         <td>
                                             @if($row->is_bundle)
                                                 @php
@@ -80,7 +78,6 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <!-- @{{ $row->is_bundle ? 'Yes' : 'No' }} -->
                                             @if($row->is_bundle && !empty($row->bundleItems) && count($row->bundleItems) > 0)
                                                 @foreach($row->bundleItems as $item)
                                                     Sku Code - {{$item->childSku->sku_code}}<br>

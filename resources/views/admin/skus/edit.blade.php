@@ -9,7 +9,7 @@
                     <h1 class="">Skus</h1>
                     <ul class="breadcrumb">
                         <li><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                        <li><a href="{{ route('admin.products.edit', $result->id) }}">Product - {{$result->title}}</a></li>
+                        <li><a href="{{ route('admin.products.edit', $result->product->id) }}">Product - {{$result->product->title}}</a></li>
                     </ul>    
                 </div>
                 
@@ -27,13 +27,19 @@
     <div class="row">
 
             <div class="my_panel form_box">
-                <form id="data_form" action="" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <input type="hidden" name="dataID" value="{{ $result->id }}">
+                
+                @if(Session::has('success'))
+                    <div class="alert alert-success">{{Session::get('success')}}</div>
+                @endif
+                @if(Session::has('error'))
+                    <div class="alert alert-danger">{{Session::get('error')}}</div>
+                @endif
+
+                <form>
                     <div class="page-header my_style less_margin">
                         <div class="left_section">
                             <div class="title_text">
-                                <div class="title">Edit Sku</div>
+                                <div class="title">View Sku</div>
                                 <div class="sub_title">Please fillup the form </div>
                             </div>
                         </div>
@@ -47,119 +53,129 @@
                     <div class="inner_boxes">
 
                         <div class="input_boxes">
-                            <div class="col-sm-6">
+                            <div class="col-sm-3">
                                 <div class="input_box">
                                     <label>Image</label>
-                                    <div class="error form_error form-error-image"></div>
-                                    <img src="{{ $result->image }}">
+                                    <a href="{{ asset('uploads/products/'.$result->product->slug.'/'.$result->image) }}" target="_blank">
+                                        <img src="{{ asset('uploads/products/'.$result->product->slug.'/'.$result->image) }}" width="100px">
+                                    </a>
                                 </div>
                             </div>
-                            <div class="col-sm-12">
+                            <div class="col-sm-3">
+                                <div class="input_box">
+                                    <label>QR Code</label>
+                                    <a href="{{ asset('uploads/products/'.$result->product->slug.'/'.$result->barcode) }}" target="_blank">
+                                        <img src="{{ asset('uploads/products/'.$result->product->slug.'/'.$result->barcode) }}" width="100px">
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="input_box">
+                                    <label>Sku Code</label>
+                                    <div>{{ $result->sku_code }}</div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
                                 <div class="input_box">
                                     <label>Stock</label>
-                                    <div class="error form_error form-error-stock"></div>
-                                    <input type="number" name="stock" placeholder="Stock" value="{{ $result->stock }}">
+                                    <div>
+                                        <big>
+                                            @if($result->is_bundle)
+                                                @php
+                                                    $bundleStock = $result->bundleItems
+                                                    ->map(function ($item) {
+                                                        return intdiv($item->childSku->stock, $item->quantity);
+                                                    })
+                                                    ->min();
+                                                @endphp
+                                                {{$bundleStock}}
+                                            @else
+                                                {{ $result->stock }}
+                                            @endif
+                                        </big>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="input_box">
+                                    <label>Attributes</label>
+                                    <div>
+                                        @if(!empty($result->attributeValues) && count($result->attributeValues) > 0)
+                                            <ul>
+                                                @foreach($result->attributeValues as $attributeValue)
+                                                    <li>{{ $attributeValue->attribute->title }} :- {{ $attributeValue->value }}</li>
+                                                @endforeach
+                                            </ul>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                             <div class="clr"></div>
                         </div>
-
-                        <div class="attributes_wrapper">
-                            <div class="attributes-section">
-                                <div class="input_boxes attribute-group">
-                                    <!----Product ----->
-                                    <div class="col-sm-4">
-                                        <div class="input_box">
-                                            <label>Attribute Type 1</label>
-                                            <div class="error form_error form-error-attributes-0-id"></div>
-                                            <select name="attributes[0][id]" class="attribute-id">
-                                                <option value="">Select Attribute Type</option>
-                                                @foreach ($attributes as $attribute)
-                                                <option value="{{$attribute->id}}">{{$attribute->title}}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-5">
-                                        <div class="input_box">
-                                            <label>Value</label>
-                                            <div class="error form_error form-error-attributes-0-value"></div>
-                                            <select name="attributes[0][value]" class="custom_select">
-                                                <option value="">Select Attribute Value</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <input type="button" name="button" value="Add Attribute" class="add-attribute blue_filled_btn">
-                        </div>
-                        <br>
-                        <br>
 
                         <div class="input_boxes">
                             <div class="col-sm-12">
                                 <div class="input_box">
                                     <label>Is_Bundle</label>
-                                    <div class="error form_error form-error-is_bundle"></div>
-                                    <select name="is_bundle">
-                                        <option value="1">Yes</option>
-                                        <option value="0" selected>No</option>
-                                    </select>
+                                    <div>{{ $result->is_bundle ? 'Yes' : 'No' }}</div>
+                                    <!-- <select>
+                                        <option value="1" @selected($result->is_bundle == 1)>Yes</option>
+                                        <option value="0" @selected($result->is_bundle == 0)>No</option>
+                                    </select> -->
                                 </div>
                             </div>
                             <div class="clr"></div>
                         </div>
 
+                        @if($result->is_bundle && !empty($result->bundleItems) && count($result->bundleItems) > 0)
                         <div class="bundles_wrapper">
                             <div class="bundles-section">
-                                <div class="input_boxes bundle-group">
-                                    <!----Product ----->
-                                    <div class="col-sm-4">
-                                        <div class="input_box">
-                                            <label>Product 1</label>
-                                            <div class="error form_error form-error-bundles-0-product_id"></div>
-                                            <select name="bundles[0][product_id]" class="bundle-product_id">
-                                                <option value="">Select Product</option>
-                                                @foreach ($products as $product)
-                                                    <option value="{{$product->id}}">{{$product->title}}</option>
-                                                @endforeach
-                                            </select>
+                                @foreach($result->bundleItems as $item)
+                                    <div class="input_boxes bundle-group">
+                                        <!----Product ----->
+                                        <div class="col-sm-3">
+                                            <div class="input_box">
+                                                <label>Product {{$loop->iteration}}</label>
+                                                <div>{{ $item->childSku->product->title }}</div>
+                                                <!-- <input type="text" value="{{ $item->childSku->product->title }}"> -->
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="input_box">
+                                                <label>SKU</label>
+                                                <div>{{ $item->childSku->sku_code }}</div>
+                                                <!-- <input type="text" value="{{ $item->childSku->sku_code }}"> -->
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="input_box">
+                                                <label>Attributes</label>
+                                                <div>
+                                                    @if(!empty($item->childSku->attributeValues) && count($item->childSku->attributeValues) > 0)
+                                                        <ul>
+                                                            @foreach($item->childSku->attributeValues as $attributeValue)
+                                                                <li>{{ $attributeValue->attribute->title }} :- {{ $attributeValue->value }}</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="input_box">
+                                                <label>Quantity</label>
+                                                <div>{{ $item->quantity }}</div>
+                                                <!-- <input type="text" value="{{ $item->quantity }}"> -->
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
-                                        <div class="input_box">
-                                            <label>SKU</label>
-                                            <div class="error form_error form-error-bundles-0-sku_id"></div>
-                                            <select name="bundles[0][sku_id]" class="custom_select">
-                                                <option value="">Select Sku</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <div class="input_box">
-                                            <label>Quantity</label>
-                                            <div class="error form_error form-error-bundles-0-quantity"></div>
-                                            <input type="number" name="bundles[0][quantity]" min="0">
-                                        </div>
-                                    </div>
-                                </div>
+                                @endforeach
                             </div>
-                            <input type="button" name="button" value="Add Product Sku" class="add-bundle blue_filled_btn">
                         </div>
                         <br>
                         <br>
+                        @endif
                         
-                        <div class="input_boxes">
-                            <div class="col-sm-4">
-                                <div class="input_box">
-                                    <div class="error form_error form-error-tabs"></div>
-                                    <div class="error form_error form-error-filters"></div>
-                                    <input type="submit" name="submit" id="submit" value="Save" class="btn btn-primary">
-                                </div>
-                            </div>
-                            <div class="clr"></div>
-                        </div>
-
                     </div>
                 </form>
             </div>
@@ -167,7 +183,155 @@
     </div>
     <!-- /.row -->
 
-@include('admin.products.skus')
+    @if(!$result->is_bundle)
+
+    <div class="row">
+
+            <div class="my_panel form_box">
+                
+                @if(Session::has('success'))
+                    <div class="alert alert-success">{{Session::get('success')}}</div>
+                @endif
+                @if(Session::has('error'))
+                    <div class="alert alert-danger">{{Session::get('error')}}</div>
+                @endif
+
+                <form id="data_form" action="" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" name="dataID" value="{{ $result->id }}">
+                    <div class="page-header my_style less_margin">
+                        <div class="left_section">
+                            <div class="title_text">
+                                <div class="title">Update Sku</div>
+                                <div class="sub_title">Please fillup the form </div>
+                            </div>
+                        </div>
+                        <div class="right_section">
+                            <!-- <div class="purple_filled_btn">
+                                <a href="#">Save</a>
+                            </div> -->
+                        </div>
+                    </div>
+
+                    <div class="inner_boxes">
+
+                        <div class="input_boxes">
+                            <div class="col-sm-4">
+                                <div class="input_box">
+                                    <label>Image</label>
+                                    <div class="error form_error form-error-image"></div>
+                                    @if(!empty($result->image))
+                                        <div class="existing_file_wrapper">
+                                            To replace <a href="{{ asset('uploads/products/'.$result->product->slug.'/'.$result->image) }}" target="_blank"><img src="{{ asset('uploads/products/'.$result->product->slug.'/'.$result->image) }}" width="50px"></a> select below
+                                        </div>
+                                        <input type="hidden" name="existing_image" value="{{ $result->image }}">
+                                    @endif
+                                    <input type="file" name="image" placeholder="Replace Image">
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="input_box">
+                                    <label>Stock*</label>
+                                    <div class="error form_error form-error-stock"></div>
+                                    <input type="number" name="stock" placeholder="Stock" min="0">
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="input_box">
+                                    <label>Movement Type*</label>
+                                    <div class="error form_error form-error-movement_type"></div>
+                                    <select name="movement_type">
+                                        <option value="increment">Increment</option>
+                                        <option value="decrement">Decrement</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="input_box">
+                                    <label>Remarks</label>
+                                    <div class="error form_error form-error-remarks"></div>
+                                    <textarea name="remarks"></textarea>
+                                </div>
+                            </div>
+                            <div class="clr"></div>
+                        </div>
+
+                        <div class="input_boxes">
+                            <div class="col-sm-4">
+                                <div class="input_box">
+                                    <div class="error form_error form-error-all_errors"></div>
+                                    <input type="submit" name="submit" id="submit" value="Save" class="btn btn-primary">
+                                </div>
+                            </div>
+                            <div class="clr"></div>
+                        </div>
+                        
+                    </div>
+                </form>
+            </div>
+
+    </div>
+    <!-- /.row -->
+    @endif
+
+    <div class="row">
+        <div class="fourth_row">
+            
+            <div class="my_panel">
+                
+                @if(Session::has('success'))
+                    <div class="alert alert-success">{{Session::get('success')}}</div>
+                @endif
+                @if(Session::has('error'))
+                    <div class="alert alert-danger">{{Session::get('error')}}</div>
+                @endif
+
+                <div class="upper_sec">
+                    <div class="left_section">
+                        <div class="title">Inventory Movements</div>
+                    </div>
+                    <div class="right_section">
+                    </div>
+                </div>
+                <div class="details_table">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <th class="col-sm-3">Quantity</th>
+                                <th class="col-sm-3">Movement Type</th>
+                                <th class="col-sm-3">Remarks</th>
+                                <th class="col-sm-3">Created By / Updated By</th>
+                            </tr>
+                            @if(!empty($result->inventoryMovements) && count($result->inventoryMovements) > 0)
+                                @foreach ($result->inventoryMovements as $row)
+                                    <tr>
+                                        <td>{{ $row->quantity }}</td>
+                                        <td>{{ $row->movement_type }}</td>
+                                        <td>{!! $row->remarks !!}</td>
+                                        <td>
+                                            {{ $row->created_by }} <br> {{ $row->created_at }}
+                                            <br> / <br>
+                                            {{ $row->updated_by }} <br> {{ $row->updated_at }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td colspan="4">No Records</td>
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </div>
+        <!-- fourth_row end -->
+    </div>
+    <!-- /.row -->
+
+
 
 <script type="text/javascript">
 $(document).ready(function() {
@@ -185,14 +349,14 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "{{ route('admin.products.update', $result->id) }}",
+            url: "{{ route('admin.skus.update', $result->id) }}",
             data:  formData,
             dataType: 'json',
             cache: false,
             contentType: false,
             processData: false,
             success: function(result) {
-                location.href="{{ route('admin.products.index') }}";
+                location.href="{{ route('admin.skus.edit', $result->id) }}";
             },
             error: function(data){
                 if (data.status === 422) {
@@ -223,30 +387,6 @@ $(document).ready(function() {
         });
 
     }));
-
-    $('select[name="category_id"]').on('change', function () {
-        var categoryId = $(this).val();
-
-        if (categoryId) {
-            $.ajax({
-                url: "{{ route('admin.get_sub_categories_by_category', ':id') }}".replace(':id', categoryId),
-                type: 'POST',
-                data: {
-                    _token: "{{csrf_token()}}"
-                },
-                success: function (data) {
-                    let $subCategoriesSelect = $('select[name="sub_category_id"]');
-                    $subCategoriesSelect.empty().append('<option value="" disabled selected>Sub Category</option>');
-
-                    $.each(data, function (key, value) {
-                        $subCategoriesSelect.append('<option value="' + value.id + '">' + value.title + '</option>');
-                    });
-                }
-            });
-        } else {
-            $('select[name="sub_category_id"]').empty().append('<option value="" disabled selected>Sub Category</option>');
-        }
-    });
 
 });
 

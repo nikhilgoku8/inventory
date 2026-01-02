@@ -20,5 +20,10 @@ class SkuBundle extends Model
     {
         return $this->belongsTo(Sku::class, 'child_sku_id');
     }
+
+    public function parentSku()
+    {
+        return $this->belongsTo(Sku::class, 'bundle_sku_id');
+    }
     
 }

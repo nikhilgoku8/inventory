@@ -63,9 +63,13 @@ Route::prefix('iwm')->as('admin.')->group(function(){
 
             Route::post('/products/{product}/skus', [SkuController::class, 'store'])->name('skus.store');
             Route::get('/skus/{sku}/edit', [SkuController::class, 'edit'])->name('skus.edit');
+            Route::get('/skus/{sku}', [SkuController::class, 'show'])->name('skus.show');
             Route::put('/skus/{sku}', [SkuController::class, 'update'])->name('skus.update');
             Route::post('/skus/bulk-delete', [SkuController::class, 'bulkDelete'])->name('skus.bulk-delete');
             Route::post('/get_skus_by_product/{id}', [SkuController::class, 'get_skus_by_product'])->name('get_skus_by_product');
+
+            Route::get('/scan-qr', [SkuController::class, 'scan_qr'])->name('scan_qr');
+            Route::post('/skus/validate', [SkuController::class, 'validateSku'])->name('skus.validate');
 
 
     });

@@ -72,6 +72,7 @@
 
                         @if(in_array(session('userType'), ['superadmin','executive']))
                             <li><a href="{{ route('admin.dashboard') }}" class="active"><i class="fa fa-line-chart" aria-hidden="true"></i> Dashboard</a></li>
+                            <li><a href="{{ route('admin.scan_qr') }}" class="active">Scan QR</a></li>
                             <li><a href="{{ route('admin.admins.index') }}">Admins</a></li>
                             <li><a href="{{ route('admin.categories.index') }}">Categories</a></li>
                             <li><a href="{{ route('admin.sub-categories.index') }}">Sub Categories</a></li>

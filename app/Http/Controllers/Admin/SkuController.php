@@ -13,45 +13,52 @@ use App\Models\Sku;
 use App\Models\SkuBundle;
 use App\Models\Attribute;
 use App\Models\AttributeValue;
+use App\Models\InventoryMovement;
 
 use Picqer\Barcode\BarcodeGeneratorPNG;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class SkuController extends Controller
 {
-    public function index(Request $request)
-    {
+    // public function index(Request $request)
+    // {
 
-        $subCategoryIds = [];
+    //     $subCategoryIds = [];
 
-        if(!empty($request->input('category_id'))){
-            $category = Category::find($request->input('category_id'));
-            $subCategoryIds = $category->subcategories->pluck('id')->toArray();
-        }
+    //     if(!empty($request->input('category_id'))){
+    //         $category = Category::find($request->input('category_id'));
+    //         $subCategoryIds = $category->subcategories->pluck('id')->toArray();
+    //     }
 
-        if(!empty($request->input('sub_category_id'))){
-            $subCategoryIds = [$request->input('sub_category_id')];
-        }
+    //     if(!empty($request->input('sub_category_id'))){
+    //         $subCategoryIds = [$request->input('sub_category_id')];
+    //     }
 
-        $data['categories'] = Category::all();
-        $data['sub_categories'] = !empty($request->input('category_id'))
-            ? SubCategory::where('category_id', $request->input('category_id'))->get()
-            : SubCategory::all();
+    //     $data['categories'] = Category::all();
+    //     $data['sub_categories'] = !empty($request->input('category_id'))
+    //         ? SubCategory::where('category_id', $request->input('category_id'))->get()
+    //         : SubCategory::all();
             
-        $data['result'] = Sku::with('subCategory', 'subCategory.category')
-            ->leftJoin('sub_categories', 'products.sub_category_id', '=', 'sub_categories.id')
-            ->when($request->input('q'), function ($query) use ($request) {
-                return $query->where('products.title', 'LIKE', '%'.$request->input('q').'%');
-            })
-            ->when($subCategoryIds, function ($query) use ($subCategoryIds) {
-                return $query->whereIn('products.sub_category_id', $subCategoryIds);
-            })
-            ->orderBy('sub_categories.category_id')   // 🔥 Sort by category first
-            ->orderBy('products.sub_category_id')
-            ->orderBy('products.title')
-            ->select('products.*') // VERY IMPORTANT otherwise pagination breaks
-            ->paginate(100);
+    //     $data['result'] = Sku::with('subCategory', 'subCategory.category')
+    //         ->leftJoin('sub_categories', 'products.sub_category_id', '=', 'sub_categories.id')
+    //         ->when($request->input('q'), function ($query) use ($request) {
+    //             return $query->where('products.title', 'LIKE', '%'.$request->input('q').'%');
+    //         })
+    //         ->when($subCategoryIds, function ($query) use ($subCategoryIds) {
+    //             return $query->whereIn('products.sub_category_id', $subCategoryIds);
+    //         })
+    //         ->orderBy('sub_categories.category_id')   // 🔥 Sort by category first
+    //         ->orderBy('products.sub_category_id')
+    //         ->orderBy('products.title')
+    //         ->select('products.*') // VERY IMPORTANT otherwise pagination breaks
+    //         ->paginate(100);
 
-        return view('admin.products.index', $data);
+    //     return view('admin.products.index', $data);
+    // }
+
+    public function scan_qr()
+    {
+        return view('admin.scan-qr');
     }
 
     public function create(Product $product)
@@ -62,21 +69,46 @@ class SkuController extends Controller
         return view('admin.skus.create', $data);
     }
 
-    public function show(Sku $sku)
+    public function view(Request $request)
     {
         $data['result'] = $sku;
         $data['categories'] = Category::all();
         $data['subCategories'] = SubCategory::all();
-        return view('admin.products.show', $data);
+        return view('admin.skus.show', $data);
+    }
+
+    public function validateSku(Request $request)
+    {
+        $request->validate([
+            'sku_code' => 'required|exists:skus,sku_code'
+        ]);
+
+        $sku = Sku::where('sku_code', $request->sku_code)->first();
+
+        // if (! $sku) {
+        //     return response()->json([
+        //         'error' => true,
+        //         'message' => 'Invalid SKU code',
+        //         'errors' => [ 'all_errors' => 'Invalid SKU code'],
+        //     ], 422);
+        // }
+
+        return response()->json([
+            'success' => true,
+            'redirect_url' => route('admin.skus.edit', $sku->id)
+        ]);
+    }
+
+    public function show(Sku $sku)
+    {
+        $data['result'] = $sku;
+        return view('admin.skus.show', $data);
     }
 
     public function edit(Sku $sku)
     {
-        $data['result'] = $sku;
-        $data['categories'] = Category::all();
-        // $data['subCategories'] = SubCategory::all();
-        $data['subCategories'] = SubCategory::where('category_id', $sku->subCategory->category_id)->get();
-        return view('admin.products.edit', $data);
+        $data['result'] = $sku->loadMissing('attributeValues');
+        return view('admin.skus.edit', $data);
     }
 
     public function store(Request $request, Product $product)
@@ -86,7 +118,105 @@ class SkuController extends Controller
 
     public function update(Request $request, Sku $sku)
     {
-        return $this->handleSkuRequest($request, $sku, false, $sku->product);
+        if ($sku->is_bundle) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Bundle Inventory Movements Not Allowed',
+                'errors' => [ 'all_errors' => 'Bundle Inventory Movements Not Allowed'],
+            ], 403);
+        }
+
+        try {
+
+            $rules = [
+                'image' => 'bail|required_without:existing_image|file|mimes:jpg,jpeg,png,webp|max:1024',
+                'stock' => 'required|numeric|min:1',
+                'movement_type' => 'required',
+                'remarks' => 'nullable|string',
+            ];
+
+            $messages = [];
+
+            $validator = Validator::make($request->all(), $rules , $messages, []);
+
+            $validated = $validator->validated();
+
+            $currentStock = $sku->stock;
+            $stockToBeUpdated = 0;
+
+            if ($validated['movement_type'] == 'decrement'){
+
+                if ($currentStock < $validated['stock']) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Invalid attribute and value combination.',
+                        'errors' => [ 'stock' => 'Decrement Stock cannot be less than current stock'],
+                    ], 422);
+                }
+                $stockToBeUpdated = $currentStock - $validated['stock'];
+
+            }else{
+                $stockToBeUpdated = $currentStock + $validated['stock'];
+            }
+
+            $skuData = [
+                'stock' => $stockToBeUpdated,
+                'created_by' => session('username'),
+                'updated_by' => session('username'),
+            ];
+
+            // Need to set folder path for file manipulation
+            $uploadRoot = base_path(env('UPLOAD_ROOT'));
+            $imagesFolder = $uploadRoot . '/products/'. $sku->product->slug;
+
+            if($request->hasFile('image')){
+                $file = $validated['image'];
+                $fileName = $sku->product->slug . '_' . uniqid() . '_' . date('Ymdhis') . '.' . $file->getClientOriginalExtension();
+                $file->move($imagesFolder, $fileName);
+                $skuData['image'] = $fileName;
+
+                $existing_image = $sku->image;
+                // Delete existing image if exists
+                if($existing_image && file_exists($imagesFolder.'/'.$existing_image)){
+                    @unlink($imagesFolder.'/'.$existing_image);
+                }
+
+            }else{
+                $validated['image'] = $request->input('existing_image');
+            }
+
+            $sku->update($skuData);
+
+            InventoryMovement::create([
+                'sku_id' => $sku->id,
+                'quantity' => $validated['stock'],
+                'movement_type' => $validated['movement_type'],
+                'remarks' => $validated['remarks'],
+                'created_by' => session('username'),
+                'updated_by' => session('username'),
+            ]);
+
+            session()->flash('success', 'Sku updated successfully!');
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Sku updated successfully!',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'error_type' => 'form',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            // dd($e);
+            return response()->json([
+                'status' => 'error',
+                'error_type' => 'server',
+                'message' => 'Something went wrong. Please try again later.',
+                'console_message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     // public function string_filter($string){
@@ -102,7 +232,7 @@ class SkuController extends Controller
             $rules = [
                 'image' => 'bail|required_without:existing_image|file|mimes:jpg,jpeg,png,webp|max:1024',
                 // 'price' => 'nullable|numeric',
-                'stock' => 'required|numeric|min:0',
+                'stock' => 'required|numeric|min:1',
                 'attributes' => 'required|array|min:1',
                 'attributes.*.id' => 'required|exists:attributes,id|distinct',
                 'attributes.*.value' => 'required|exists:attribute_values,id|distinct',
@@ -208,13 +338,23 @@ class SkuController extends Controller
 
             $validated['sku_code'] = $product->code .'-'.$attribute_codes;
 
+            // // Generate via sku_code and store barcode
+            // $generator = new BarcodeGeneratorPNG();
+            // $barcodeData = $generator->getBarcode($validated['sku_code'], $generator::TYPE_CODE_128);
+
+            // $validated['barcode'] = $product->slug . '_barcode_' . uniqid() . '_' . date('Ymdhis') . '.png';
+
+            // file_put_contents($imagesFolder . '/' . $validated['barcode'], $barcodeData);
+
             // Generate via sku_code and store barcode
-            $generator = new BarcodeGeneratorPNG();
-            $barcodeData = $generator->getBarcode($validated['sku_code'], $generator::TYPE_CODE_128);
+            $qr_data =  QrCode::format('svg')
+                ->size(300)     // print-safe size
+                ->margin(2)
+                ->generate($validated['sku_code']);
 
-            $validated['barcode'] = $product->slug . '_barcode_' . uniqid() . '_' . date('Ymdhis') . '.png';
+            $validated['barcode'] = $product->slug . '_qr_code_' . uniqid() . '_' . date('Ymdhis') . '.svg';
 
-            file_put_contents($imagesFolder . '/' . $validated['barcode'], $barcodeData);
+            file_put_contents($imagesFolder . '/' . $validated['barcode'], $qr_data);
 
             // Directly handle the save/update logic here
             if ($isNew) {

@@ -29,6 +29,11 @@ class Sku extends Model
     {
         return $this->belongsToMany(AttributeValue::class, 'sku_attributes')->withTimestamps();
     }
+
+    public function inventoryMovements()
+    {
+        return $this->hasMany(InventoryMovement::class);
+    }
     
     // bundles this SKU is composed of
     public function bundleItems()
