@@ -29,7 +29,7 @@
 <link href="{{ asset('admin/assets/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet">
 
 <!-- Custom CSS -->
-<link rel="stylesheet" href="{{ asset('admin/assets/css/custom.css') }}">
+<link rel="stylesheet" href="{{ asset('admin/assets/css/custom.css') }}?version={{date('Ymdhis')}}">
 
 <!-- Select Search -->
 <link rel="stylesheet" href="{{ asset('admin/assets/plugins/selects_search/select2.min.css') }}">

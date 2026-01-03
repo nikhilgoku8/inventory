@@ -1551,19 +1551,25 @@ span.order_delivered{
 		margin: 0 0 0 0;
 	}
 	.header_bar{
-		flex-wrap: wrap;
-		justify-content: center;
+		/*flex-wrap: wrap;*/
+		/*justify-content: center;*/
 	}
 	.header_bar .logo_box{
 		margin: 10px 0 15px 0;
+	}
+	.header_bar .logo_box .logo img{
+		max-width: 100px;
 	}
 	.header_bar .right_section{
 		flex-wrap: wrap;
 	}
 	.header_bar .right_section .admin_info {
-	    text-align: center;
+	    text-align: right;
 	    width: 100%;
 	    padding: 0 0 10px 0;
+	}
+	.header_bar .right_section .navbar-top-links{
+		margin: 0 0 0 auto;
 	}
 	.navbar-default .navbar-brand{
 		display: none;

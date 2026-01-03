@@ -95,7 +95,8 @@ class SkuController extends Controller
 
         return response()->json([
             'success' => true,
-            'redirect_url' => route('admin.skus.edit', $sku->id)
+            // 'redirect_url' => route('admin.skus.edit', $sku->id)
+            'html' => view('admin.partials.sku-details', ['result' => $sku])->render()
         ]);
     }
 
@@ -108,6 +109,7 @@ class SkuController extends Controller
     public function edit(Sku $sku)
     {
         $data['result'] = $sku->loadMissing('attributeValues');
+        $data['inventoryMovements'] = $sku->inventoryMovements()->orderByDesc('id')->paginate(10);
         return view('admin.skus.edit', $data);
     }
 
@@ -129,7 +131,8 @@ class SkuController extends Controller
         try {
 
             $rules = [
-                'image' => 'bail|required_without:existing_image|file|mimes:jpg,jpeg,png,webp|max:1024',
+                // 'image' => 'bail|required_without:existing_image|file|mimes:jpg,jpeg,png,webp|max:1024',
+                'image' => 'bail|sometimes|file|mimes:jpg,jpeg,png,webp|max:1024',
                 'stock' => 'required|numeric|min:1',
                 'movement_type' => 'required',
                 'remarks' => 'nullable|string',

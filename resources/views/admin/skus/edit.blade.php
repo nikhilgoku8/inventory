@@ -233,7 +233,7 @@
                                 <div class="input_box">
                                     <label>Stock*</label>
                                     <div class="error form_error form-error-stock"></div>
-                                    <input type="number" name="stock" placeholder="Stock" min="0">
+                                    <input type="number" name="stock" placeholder="Stock" min="1">
                                 </div>
                             </div>
                             <div class="col-sm-4">
@@ -302,8 +302,8 @@
                                 <th class="col-sm-3">Remarks</th>
                                 <th class="col-sm-3">Created By / Updated By</th>
                             </tr>
-                            @if(!empty($result->inventoryMovements) && count($result->inventoryMovements) > 0)
-                                @foreach ($result->inventoryMovements as $row)
+                            @if(!empty($inventoryMovements) && count($inventoryMovements) > 0)
+                                @foreach ($inventoryMovements as $row)
                                     <tr>
                                         <td>{{ $row->quantity }}</td>
                                         <td>{{ $row->movement_type }}</td>
@@ -323,6 +323,12 @@
                         </tbody>
                     </table>
                 </div>
+                @if(method_exists($inventoryMovements, 'links'))
+                    <div class="table_pagination">
+                        {{ $inventoryMovements->links() }}
+                        <div class="clr"></div>
+                    </div>
+                @endif
 
             </div>
 
@@ -389,8 +395,6 @@ $(document).ready(function() {
     }));
 
 });
-
-</script>
 
 </script>
             

@@ -142,6 +142,16 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
+    $("input").prop('disabled', true);
+    $("select").prop('disabled', true);
+    $("textarea").prop('disabled', true);
+    $(".delete_icon").css({'display':'none'});
+    $(".edit_details").css({'display':'none'});
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function() {
 
     $("#data_form").on('submit',(function(e){
 

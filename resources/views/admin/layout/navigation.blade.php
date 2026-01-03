@@ -60,7 +60,7 @@
             
 
             <div class="navbar-default sidebar" role="navigation">
-                <div class="sidebar-nav navbar-collapse">
+                <div class="sidebar-nav navbar-collapse collapse">
                     <ul class="nav" id="side-menu">
                         <li class="menu_header">
                             <!-- <div class="user_profile">
