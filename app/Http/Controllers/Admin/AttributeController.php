@@ -11,7 +11,7 @@ class AttributeController extends Controller
 {
     public function index()
     {
-        $data['result'] = Attribute::paginate(100);
+        $data['result'] = Attribute::orderBy('sort_order')->orderBy('title')->paginate(100);
         return view('admin.attributes.index', $data);
     }
 

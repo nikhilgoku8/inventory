@@ -147,6 +147,7 @@ $(document).ready(function() {
     $("textarea").prop('disabled', true);
     $(".delete_icon").css({'display':'none'});
     $(".edit_details").css({'display':'none'});
+    $(".action input").prop('disabled', false);
 });
 </script>
 

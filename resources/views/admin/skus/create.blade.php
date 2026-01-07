@@ -33,7 +33,7 @@
                         <div class="left_section">
                             <div class="title_text">
                                 <div class="title">Add New Sku</div>
-                                <div class="sub_title">Please fillup the form </div>
+                                <div class="sub_title">Please fillup the form (Check attributes for the siblings SKU of the same product for consistency)</div>
                             </div>
                         </div>
                         <div class="right_section">

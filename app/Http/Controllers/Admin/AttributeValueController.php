@@ -24,7 +24,7 @@ class AttributeValueController extends Controller
 
     public function create()
     {
-        $data['attributes'] = Attribute::all();
+        $data['attributes'] = Attribute::orderBy('sort_order')->orderBy('title')->get();
         return view('admin.attribute-values.create', $data);
     }
 

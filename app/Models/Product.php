@@ -32,6 +32,7 @@ class Product extends Model
     protected static function booted()
     {
         static::deleting(function ($product) {
+            $product->skus->each->delete();
             $uploadRoot = base_path(env('UPLOAD_ROOT'));
             $imagesPath = $uploadRoot . '/products';
             
