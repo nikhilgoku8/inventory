@@ -144,6 +144,7 @@ class ProductController extends Controller
 
             return response()->json([
                 'status' => 'success',
+                'product_id' => $product->id,
                 'message' => $isNew ? 'Product created successfully!' : 'Product updated successfully!',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {

@@ -137,7 +137,15 @@ $(document).ready(function() {
             contentType: false,
             processData: false,
             success: function(result) {
-                location.href="{{ route('admin.products.index') }}";
+                // location.href="{{ route('admin.products.index') }}";
+
+                // if(result.product_id)
+                let product_id = result.product_id;
+
+                let url = "{{ route('admin.products.edit', ':id') }}";
+                url = url.replace(':id', product_id);
+
+                location.href = url;
             },
             error: function(data){
                 if (data.status === 422) {
