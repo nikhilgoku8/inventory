@@ -250,7 +250,13 @@
                                 <div class="input_box">
                                     <label>Remarks</label>
                                     <div class="error form_error form-error-remarks"></div>
-                                    <textarea name="remarks"></textarea>
+                                    <select name="remarks">
+                                        <option selected>Online</option>
+                                        <option>Offline</option>
+                                        <option>Gifting</option>
+                                        <option>Returned</option>
+                                        <option>Stock Update</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="clr"></div>

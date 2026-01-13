@@ -20,41 +20,43 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class SkuController extends Controller
 {
-    // public function index(Request $request)
-    // {
+    public function index(Request $request)
+    {
 
-    //     $subCategoryIds = [];
+        // $subCategoryIds = [];
 
-    //     if(!empty($request->input('category_id'))){
-    //         $category = Category::find($request->input('category_id'));
-    //         $subCategoryIds = $category->subcategories->pluck('id')->toArray();
-    //     }
+        // if(!empty($request->input('category_id'))){
+        //     $category = Category::find($request->input('category_id'));
+        //     $subCategoryIds = $category->subcategories->pluck('id')->toArray();
+        // }
 
-    //     if(!empty($request->input('sub_category_id'))){
-    //         $subCategoryIds = [$request->input('sub_category_id')];
-    //     }
+        // if(!empty($request->input('sub_category_id'))){
+        //     $subCategoryIds = [$request->input('sub_category_id')];
+        // }
 
-    //     $data['categories'] = Category::all();
-    //     $data['sub_categories'] = !empty($request->input('category_id'))
-    //         ? SubCategory::where('category_id', $request->input('category_id'))->get()
-    //         : SubCategory::all();
+        // $data['categories'] = Category::all();
+        // $data['sub_categories'] = !empty($request->input('category_id'))
+        //     ? SubCategory::where('category_id', $request->input('category_id'))->get()
+        //     : SubCategory::all();
             
-    //     $data['result'] = Sku::with('subCategory', 'subCategory.category')
-    //         ->leftJoin('sub_categories', 'products.sub_category_id', '=', 'sub_categories.id')
-    //         ->when($request->input('q'), function ($query) use ($request) {
-    //             return $query->where('products.title', 'LIKE', '%'.$request->input('q').'%');
-    //         })
-    //         ->when($subCategoryIds, function ($query) use ($subCategoryIds) {
-    //             return $query->whereIn('products.sub_category_id', $subCategoryIds);
-    //         })
-    //         ->orderBy('sub_categories.category_id')   // 🔥 Sort by category first
-    //         ->orderBy('products.sub_category_id')
-    //         ->orderBy('products.title')
-    //         ->select('products.*') // VERY IMPORTANT otherwise pagination breaks
-    //         ->paginate(100);
+        // $data['result'] = Sku::with('subCategory', 'subCategory.category')
+        //     ->leftJoin('sub_categories', 'products.sub_category_id', '=', 'sub_categories.id')
+        //     ->when($request->input('q'), function ($query) use ($request) {
+        //         return $query->where('products.title', 'LIKE', '%'.$request->input('q').'%');
+        //     })
+        //     ->when($subCategoryIds, function ($query) use ($subCategoryIds) {
+        //         return $query->whereIn('products.sub_category_id', $subCategoryIds);
+        //     })
+        //     ->orderBy('sub_categories.category_id')   // 🔥 Sort by category first
+        //     ->orderBy('products.sub_category_id')
+        //     ->orderBy('products.title')
+        //     ->select('products.*') // VERY IMPORTANT otherwise pagination breaks
+        //     ->paginate(100);
+            
+        $data['result'] = Sku::with('product')->orderByDesc('stock')->paginate(100);
 
-    //     return view('admin.products.index', $data);
-    // }
+        return view('admin.skus.index', $data);
+    }
 
     public function scan_qr()
     {

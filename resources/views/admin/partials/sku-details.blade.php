@@ -47,7 +47,14 @@
                             <div class="input_box">
                                 <label>Remarks</label>
                                 <div class="error form_error form-error-remarks"></div>
-                                <input type="text" name="remarks" value="Order Deduction">
+                                <select name="remarks">
+                                    <option selected>Online</option>
+                                    <option>Offline</option>
+                                    <option>Gifting</option>
+                                    <option>Returned</option>
+                                    <option>Stock Update</option>
+                                </select>
+                                <!-- <input type="text" name="remarks" value="Order Deduction"> -->
                                 <!-- <textarea name="remarks">Order</textarea> -->
                             </div>
                         </div>

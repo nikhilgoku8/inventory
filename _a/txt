@@ -1,4 +1,4 @@
-php artisan migrate:refresh --path=/database/migrations/2025_12_19_090800_create_products_table.php
+php artisan migrate:refresh --path=/database/migrations/2026_01_01_154848_create_bookings_table.php
 
 categories
 - id (BIGINT, PK)
@@ -104,13 +104,14 @@ Show lowest sku products on dashboard
 
 
 preselected decrement for executive
-hide superadmin options
 total product stock
+
+hide superadmin options
 
 Online
 Offline
 Gifting
-Return	
+Return
 
 restrict Edit for Products
 	Only Allow Image Edit

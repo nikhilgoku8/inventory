@@ -60,6 +60,7 @@
                                 <th>Sub Category</th>
                                 <th>Category</th>
                                 <th>Code</th>
+                                <th>Stock</th>
                                 <th>Created By</th>
                                 <th>Updated By</th>
                                 <th class="action">ACTION</th>
@@ -76,6 +77,7 @@
                                         <td><a href="{{ route('admin.sub-categories.edit', $row->subCategory->id) }}">{{ $row->subCategory->title }}</a></td>
                                         <td><a href="{{ route('admin.categories.edit', $row->subCategory->category->id) }}">{{ $row->subCategory->category->title }}</a></td>
                                         <td>{{ $row->code }}</td>
+                                        <td>{{ $row->skus->sum('stock') }}</td>
                                         <td>{{ $row->created_by }} <br> {{ $row->created_at }}</td>
                                         <td>{{ $row->updated_by }} <br> {{ $row->updated_at }}</td>
                                         <td class="action">
