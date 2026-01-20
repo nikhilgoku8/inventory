@@ -58,6 +58,15 @@ class SkuController extends Controller
         return view('admin.skus.index', $data);
     }
 
+    public function printable()
+    {
+            
+        // $data['result'] = Sku::with('product')->orderByDesc('stock')->get();
+        $data['result'] = Product::with('skus')->get();
+
+        return view('admin.skus.printable', $data);
+    }
+
     public function scan_qr()
     {
         return view('admin.scan-qr');
