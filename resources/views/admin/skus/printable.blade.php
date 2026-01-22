@@ -11,71 +11,44 @@
 }
 img{
     max-width: 100%;
+    display: block;
 }
 .boxes_wrapper{
     background: #ddd;
     width: 210mm;
-    /*height: 297mm;*/
-    display: flex;
-    flex-wrap: wrap;
+    height: 297mm;
     /*align-items: flex-end;*/
 }
-.boxes_wrapper .box_wrapper{
-    width: 33.33%;
-    page-break-inside: avoid;
-    break-inside: avoid;
+.boxes_wrapper .qr_code_wrapper{
+    /*display: flex;
+    flex-wrap: wrap;*/
+    padding: 2mm;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr); /* Same as 1fr 1fr 1fr */
+    grid-gap: 2mm;
 }
-.boxes_wrapper .box_wrapper .box{
-    padding: 0 5% 10% 5%;
-    display: flex;
-    flex-wrap: wrap;
+.boxes_wrapper .qr_code_wrapper .qr_code{
+    /*width: 20%;*/
+    /*min-height: 25mm;*/
 }
-.boxes_wrapper .box_wrapper .box .product_name{
-    font-size: 12px;
-}
-.boxes_wrapper .box_wrapper .box .left_pane{
-    width: 50%;
-}
-.boxes_wrapper .box_wrapper .box .right_pane{
-    width: 50%;
-}
+@page { margin: 2mm; }
 @media print {
-  .boxes_wrapper .box_wrapper{
+  .boxes_wrapper .qr_code_wrapper{
     page-break-inside: avoid;
     break-inside: avoid;
   }
 }
 </style>
 </head>
-<body>
+<body onload="window.print(); window.onafterprint = () => window.close();">
 
 <div class="boxes_wrapper">
 
-@if(!empty($result))
-    @foreach ($result as $row)
-        @if(!empty($row->skus))
-            @foreach ($row->skus as $sku)
-                <div class="box_wrapper">
-                    <div class="box">
-                        <div class="left_pane">
-                            <div class="image"><img src="{{ asset('uploads/products/'.$row->slug.'/'.$sku->image) }}"></div>
-                        </div>
-                        <div class="right_pane">
-                            <div class="qr_code"><img src="{{ asset('uploads/products/'.$row->slug.'/'.$sku->barcode) }}"></div>
-                        </div>
-                        <div class="product_name">
-                            {{ $row->title }}
-                            @foreach($sku->attributeValues as $attribute)
-                                 , {{$attribute->value}}
-                            @endforeach
-                        </div>
-                        <!-- <div class="sku">{{$sku->sku_code}}</div> -->
-                    </div>
-                </div>
-            @endforeach
-        @endif
-    @endforeach
-@endif
+<div class="qr_code_wrapper">
+    @for($i=1; $i<=140; $i++)
+        <div class="qr_code"><img src="{{ asset('uploads/products/'.$sku->product->slug.'/'.$sku->barcode) }}"></div>
+    @endfor
+</div>
 
 </div>
 

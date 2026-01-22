@@ -33,6 +33,7 @@
                             <tr>
                                 <th>Sku Code</th>
                                 <th>Barcode</th>
+                                <!-- <th>Print <br>Barcode</th> -->
                                 <th>Image</th>
                                 <th>Stock</th>
                                 <th>Attributes</th>
@@ -45,10 +46,17 @@
                                     <tr>
                                         <td>{{ $row->sku_code }}</td>
                                         <td>
-                                            <a href="{{ asset('uploads/products/'.$result->slug.'/'.$row->barcode) }}" target="_blank">
+                                            <a href="{{ route('admin.skus.printable', $row->id) }}" target="_blank" style="text-align: center;">
                                                 <img src="{{ asset('uploads/products/'.$result->slug.'/'.$row->barcode) }}" width="50px">
+                                                <br>
+                                                <span><big>Print</big></span>
                                             </a>
                                         </td>
+                                        <!-- <td>
+                                            <span class="blue_filled_btn">
+                                                <a href="{{ route('admin.skus.printable', $row->id) }}" target="_blank">Print <br> Barcode</a>
+                                            </span>
+                                        </td> -->
                                         <td>
                                             <a href="{{ asset('uploads/products/'.$result->slug.'/'.$row->image) }}" target="_blank">
                                                 <img src="{{ asset('uploads/products/'.$result->slug.'/'.$row->image) }}" width="50px">
