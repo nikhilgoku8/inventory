@@ -18,19 +18,42 @@ img{
     width: 210mm;
     height: 297mm;
     /*align-items: flex-end;*/
+    overflow: hidden;
 }
 .boxes_wrapper .qr_code_wrapper{
     /*display: flex;
     flex-wrap: wrap;*/
-    padding: 2mm;
+    padding: 6mm 4mm 4mm 4mm;
     display: grid;
-    grid-template-columns: repeat(10, 1fr); /* Same as 1fr 1fr 1fr */
+    grid-template-columns: repeat(4, 1fr); /* Same as 1fr 1fr 1fr */
     grid-gap: 2mm;
 }
 .boxes_wrapper .qr_code_wrapper .qr_code{
     /*width: 20%;*/
     /*min-height: 25mm;*/
 }
+{{-- custom added code --}}
+.boxes_wrapper .qr_code_wrapper .qr_code{
+    display: flex;
+    --qr-size: 20mm;
+}
+.boxes_wrapper .qr_code_wrapper .qr_code .img{
+    width: var(--qr-size);
+}
+.boxes_wrapper .qr_code_wrapper .qr_code .txt{
+    width: calc(100% - var(--qr-size));
+    padding: 0 0 0 2mm;
+}
+.boxes_wrapper .qr_code_wrapper .qr_code .txt .product_title{
+    font-size: 12px;
+}
+.boxes_wrapper .qr_code_wrapper .qr_code .txt .attributes{
+    font-size: 12px;
+}
+.boxes_wrapper .qr_code_wrapper .qr_code .txt .attributes li{
+    list-style: none;
+}
+{{-- custom added code end --}}
 @page { margin: 2mm; }
 @media print {
   .boxes_wrapper .qr_code_wrapper{
@@ -41,12 +64,30 @@ img{
 </style>
 </head>
 <body onload="window.print(); window.onafterprint = () => window.close();">
+{{-- <body> --}}
 
 <div class="boxes_wrapper">
 
 <div class="qr_code_wrapper">
-    @for($i=1; $i<=140; $i++)
-        <div class="qr_code"><img src="{{ asset('uploads/products/'.$sku->product->slug.'/'.$sku->barcode) }}"></div>
+    @for($i=1; $i<=52; $i++)
+        <div class="qr_code">
+            <span class="img">
+                <img src="{{ asset('uploads/products/'.$sku->product->slug.'/'.$sku->barcode) }}">
+            </span>
+            <span class="txt">
+                <span class="product_title">{{ $sku->product->title }}</span>
+                <span class="attributes">
+                    @if(!empty($sku->attributeValues) && count($sku->attributeValues) > 0)
+                        <ul>
+                            @foreach($sku->attributeValues as $attributeValue)
+                                {{-- <li>{{ $attributeValue->attribute->title }} :- {{ $attributeValue->value }}</li> --}}
+                                <li>{{ $attributeValue->value }}</li>
+                            @endforeach
+                        </ul>
+                    @endif
+                </span>
+            </span>
+        </div>
     @endfor
 </div>
 
