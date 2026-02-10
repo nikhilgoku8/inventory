@@ -14,7 +14,7 @@ img{
     display: block;
 }
 .boxes_wrapper{
-    background: #ddd;
+    {{-- background: #ddd; --}}
     width: 210mm;
     height: 297mm;
     /*align-items: flex-end;*/
@@ -52,6 +52,7 @@ img{
 }
 .boxes_wrapper .qr_code_wrapper .qr_code .txt .attributes li{
     list-style: none;
+    display: flex;
 }
 {{-- custom added code end --}}
 @page { margin: 2mm; }
@@ -81,7 +82,51 @@ img{
                         <ul>
                             @foreach($sku->attributeValues as $attributeValue)
                                 {{-- <li>{{ $attributeValue->attribute->title }} :- {{ $attributeValue->value }}</li> --}}
-                                <li>{{ $attributeValue->value }}</li>
+                                <li>
+                                    @if($attributeValue->attribute->title == 'Color')
+
+                                        @php
+                                            $value = strtolower(trim($attributeValue->value));
+
+                                            if ($value === 'tricolor') {
+                                                // Indian flag: saffron, white, green
+                                                $background = 'linear-gradient(
+                                                    to bottom,
+                                                    #ff9933 0%,
+                                                    #ff9933 33%,
+                                                    #ffffff 33%,
+                                                    #ffffff 66%,
+                                                    #138808 66%,
+                                                    #138808 100%
+                                                )';
+                                            } elseif (str_contains($value, ' and ')) {
+                                                // Example: black and gold
+                                                [$color1, $color2] = array_map('trim', explode(' and ', $value));
+                                                $background = "linear-gradient(45deg, {$color1}, {$color2})";
+                                            } elseif (str_contains($value, '/')) {
+                                                // Example: grey/gray
+                                                $background = strtok($value, '/');
+                                            } else {
+                                                // Single color
+                                                $background = $value;
+                                            }
+                                        @endphp
+
+                                        {{ $attributeValue->value }} : 
+                                        <span
+                                            class="color_circle"
+                                            style="
+                                                display:inline-block;
+                                                background: {{ $background }};
+                                                width:14px;
+                                                height:12px;
+                                                border:1px solid #ddd;
+                                            ">
+                                        </span>
+                                    @else
+                                        {{ $attributeValue->value }}
+                                    @endif
+                                </li>
                             @endforeach
                         </ul>
                     @endif
