@@ -9,6 +9,9 @@ use App\Models\Category;
 use App\Models\SubCategory;
 use App\Models\Product;
 
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ExportProducts;
+
 class ProductController extends Controller
 {
     public function index(Request $request)
@@ -175,5 +178,9 @@ class ProductController extends Controller
         Product::destroy($request->input('dataID'));
 
         return response()->json(['success' => true, 'message' => 'Record Deleted']);
+    }
+
+    public function export(Request $request){
+        return Excel::download(new ExportProducts($request), 'products.xlsx');
     }
 }

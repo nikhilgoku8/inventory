@@ -50,6 +50,7 @@ Route::prefix('iwm')->as('admin.')->group(function(){
             
             Route::resource('products', ProductController::class);
             Route::post('products/bulk-delete', [ProductController::class, 'bulkDelete'])->name('products.bulk-delete');
+            Route::get('products-export', [ProductController::class, 'export'] );
 
             Route::resource('attributes', AttributeController::class);
             Route::post('/attributes/bulk-delete', [AttributeController::class, 'bulkDelete'])->name('attributes.bulk-delete');
